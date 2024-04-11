@@ -1,0 +1,17 @@
+services:
+
+   pg:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_USER: ${PG_USER}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${GITEA_DB_NAME}"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
+    ports:
+    - "${PG_PORT}:${PG_PORT}"
+    networks:
+      network:
+        ipv4_address: 10.5.0.5
