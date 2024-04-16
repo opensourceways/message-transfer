@@ -88,7 +88,7 @@ func (raw *EurBuildRaw) ToCloudEvent() EurBuildEvent {
 	event.SetTime(time.Now())
 	event.SetDataContentType("application/json")
 	event.SetDataSchema("eur:build_task")
-	event.SetSpecVersion("0.0.1")
+	event.SetSpecVersion("1.0")
 	err := event.SetData(cloudevents.ApplicationJSON, raw)
 	if err != nil {
 		return EurBuildEvent{}
@@ -106,7 +106,7 @@ func (raw *EurBuildRaw) ToCloudEventDO() do.MessageCloudEventDO {
 		Source:          "https://eur.openeuler.openatom.cn/coprs/" + raw.Body.Owner + "/" + raw.Body.Pkg + "/build/" + strconv.Itoa(raw.Body.Build),
 		Time:            time.Now(),
 		EventType:       "state:change",
-		SpecVersion:     "0.0.1",
+		SpecVersion:     "1.0",
 		DataSchema:      "eur:build_task",
 		DataContentType: "application/json",
 		EventId:         raw.ID,
