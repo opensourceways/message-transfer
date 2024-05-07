@@ -12,6 +12,11 @@ type TransferConfig struct {
 
 func GetTransferConfigFromDb(sourceTopic string) []TransferConfig {
 	var transferConfigs []TransferConfig
-	postgresql.DB().Table("message_center.transfer_config").Find(&transferConfigs, "source_topic=?", sourceTopic, "is_deleted", false)
+	postgresql.
+		DB().
+		Table("message_center.transfer_config").
+		Where("source_topic=?", sourceTopic).
+		Where("is_deleted=?", false).
+		Find(&transferConfigs)
 	return transferConfigs
 }

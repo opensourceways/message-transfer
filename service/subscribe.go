@@ -23,7 +23,7 @@ func SubscribeGiteeRaw() {
 		Topic:   "gitee_comment_raw",
 		Address: "127.0.0.1:9092",
 		Group:   "ssp_test",
-		Offset:  sarama.OffsetNewest,
+		Offset:  sarama.OffsetOldest,
 	}
 
 	h := transfer.GiteeGroupHandler{}
