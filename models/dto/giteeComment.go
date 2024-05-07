@@ -167,6 +167,6 @@ func (comment *Comment) ToCloudEventCloudEvents() CloudEvents {
 	newEvent.SetSpecVersion(cloudevents.VersionV1)
 	newEvent.SetData(cloudevents.ApplicationJSON, comment)
 	newEvent.SetID(topic + ":" + strconv.Itoa(comment.ID))
-	newEvent.User = comment.User
+	newEvent.User = comment.User.UserName
 	return newEvent
 }
