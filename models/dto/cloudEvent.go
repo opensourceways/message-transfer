@@ -8,7 +8,14 @@ import (
 )
 
 type CloudEvents struct {
+	User string
 	cloudevents.Event
+}
+
+func NewCloudEvents() CloudEvents {
+	return CloudEvents{
+		Event: cloudevents.NewEvent(cloudevents.VersionV1),
+	}
 }
 
 func (event CloudEvents) Message() ([]byte, error) {
@@ -25,6 +32,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		DataContentType: event.DataContentType(),
 		EventId:         event.ID(),
 		DataJson:        event.Data(),
+		User:            event.User,
 	}
 	return messageCloudEventDO
 }

@@ -17,6 +17,7 @@ type MessageCloudEventDO struct {
 	DataSchema      string         `gorm:"column:data_schema"`
 	SpecVersion     string         `gorm:"column:spec_version"`
 	Time            time.Time      `gorm:"column:time"`
+	User            string         `gorm:"column:user"`
 	DataJson        datatypes.JSON `gorm:"column:data_json"`
 }
 

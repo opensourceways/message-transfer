@@ -158,7 +158,7 @@ type Enterprise struct {
 
 func (comment *Comment) ToCloudEventCloudEvents() CloudEvents {
 	topic := "gitee.comment"
-	newEvent := cloudevents.NewEvent()
+	newEvent := NewCloudEvents()
 	newEvent.SetSource("https://gitee.com")
 	newEvent.SetDataSchema(comment.HTMLURL)
 	newEvent.SetType(topic)
@@ -167,5 +167,6 @@ func (comment *Comment) ToCloudEventCloudEvents() CloudEvents {
 	newEvent.SetSpecVersion(cloudevents.VersionV1)
 	newEvent.SetData(cloudevents.ApplicationJSON, comment)
 	newEvent.SetID(topic + ":" + strconv.Itoa(comment.ID))
-	return CloudEvents{newEvent}
+	newEvent.User = comment.User
+	return newEvent
 }

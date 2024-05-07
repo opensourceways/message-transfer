@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	flattener "github.com/anshal21/json-flattener"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"github.com/cloudevents/sdk-go/v2/event"
 	"message-transfer/models/bo"
 	"text/template"
 	"time"
@@ -68,17 +67,18 @@ func (raw *EurBuildMessageRaw) Flatten() map[string]interface{} {
 }
 
 func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
-	newEvent := cloudevents.NewEvent()
+	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
-	for _, config := range configs {
-		raw.transferField(newEvent, config)
+	if configs != nil {
+		for _, config := range configs {
+			raw.transferField(&newEvent, config)
+		}
+		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
-	newEvent.SetData(cloudevents.ApplicationJSON, raw)
-	return CloudEvents{newEvent}
-
+	return newEvent
 }
 
-func (raw *EurBuildMessageRaw) transferField(event event.Event, config bo.TransferConfig) {
+func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	t := template.Must(template.New("example").Parse(tmpl))
 	var resultBuffer bytes.Buffer
@@ -100,5 +100,7 @@ func (raw *EurBuildMessageRaw) transferField(event event.Event, config bo.Transf
 	case "time":
 		eventTime, _ := time.Parse(time.RFC3339, result)
 		event.SetTime(eventTime)
+	case "user":
+		event.User = result
 	}
 }
