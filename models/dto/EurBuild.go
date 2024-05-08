@@ -101,6 +101,8 @@ func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.Trans
 		eventTime, _ := time.Parse(time.RFC3339, result)
 		event.SetTime(eventTime)
 	case "user":
-		event.User = result
+		event.SetExtension("user", result)
+	case "sourceUrl":
+		event.SetExtension("sourceurl", result)
 	}
 }

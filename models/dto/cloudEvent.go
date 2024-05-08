@@ -2,13 +2,13 @@ package dto
 
 import (
 	"encoding/json"
+	"fmt"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"message-transfer/common/postgresql"
 	"message-transfer/models/do"
 )
 
 type CloudEvents struct {
-	User string
 	cloudevents.Event
 }
 
@@ -19,10 +19,13 @@ func NewCloudEvents() CloudEvents {
 }
 
 func (event CloudEvents) Message() ([]byte, error) {
-	return json.Marshal(event)
+	body, err := json.Marshal(event)
+	fmt.Println(body)
+	return body, err
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
+	fmt.Println(event)
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
@@ -32,7 +35,8 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		DataContentType: event.DataContentType(),
 		EventId:         event.ID(),
 		DataJson:        event.Data(),
-		User:            event.User,
+		User:            event.Extensions()["user"].(string),
+		SourceUrl:       event.Extensions()["sourceurl"].(string),
 	}
 	return messageCloudEventDO
 }

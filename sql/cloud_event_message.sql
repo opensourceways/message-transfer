@@ -8,10 +8,13 @@ create table cloud_event_message
     data_content_type text,
     data_schema       text,
     spec_version      text                                                                           not null,
-    data              json,
     time              timestamp,
-    created_time      timestamp,
-    updated_time      timestamp
+    created_at        timestamp,
+    updated_at        timestamp,
+    event_id          text,
+    data_json         json,
+    "user"            text,
+    source_url        text
 );
 
 comment on table cloud_event_message is '清洗后的标准消息';
@@ -26,10 +29,8 @@ comment on column cloud_event_message.data_schema is '数据分类';
 
 comment on column cloud_event_message.spec_version is '版本';
 
-comment on column cloud_event_message.data is '数据详情';
-
 comment on column cloud_event_message.time is '事件时间';
 
-alter table cloud_event_message
-    owner to postgres;
+comment on column cloud_event_message.event_id is '事件id';
+
 
