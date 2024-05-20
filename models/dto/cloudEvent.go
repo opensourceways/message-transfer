@@ -37,6 +37,8 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		DataJson:        event.Data(),
 		User:            event.Extensions()["user"].(string),
 		SourceUrl:       event.Extensions()["sourceurl"].(string),
+		Title:           event.Extensions()["title"].(string),
+		Summary:         event.Extensions()["summary"].(string),
 	}
 	return messageCloudEventDO
 }
