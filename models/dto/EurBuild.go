@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	flattener "github.com/anshal21/json-flattener"
+	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"message-transfer/models/bo"
 	"text/template"
-	"time"
 )
 
 type EurBuildMessageRaw struct {
@@ -73,7 +73,7 @@ func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.Trans
 	case "specVersion":
 		event.SetSpecVersion(result)
 	case "time":
-		eventTime, _ := time.Parse(time.RFC3339, result)
+		eventTime, _ := dateparse.ParseAny(result)
 		event.SetTime(eventTime)
 	case "user":
 		event.SetExtension("user", result)
