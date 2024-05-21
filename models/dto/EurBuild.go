@@ -11,51 +11,26 @@ import (
 )
 
 type EurBuildMessageRaw struct {
-	Properties struct {
-		AppID           interface{} `json:"app_id"`
-		ClusterID       interface{} `json:"cluster_id"`
-		ContentEncoding string      `json:"content_encoding"`
-		ContentType     string      `json:"content_type"`
-		CorrelationID   interface{} `json:"correlation_id"`
-		DeliveryMode    int         `json:"delivery_mode"`
-		Expiration      interface{} `json:"expiration"`
-		Headers         struct {
-			FedoraMessagingSchema      string `json:"fedora_messaging_schema"`
-			FedoraMessagingSeverity    int    `json:"fedora_messaging_severity"`
-			FedoraMessagingUserKkleine bool   `json:"fedora_messaging_user_kkleine"`
-			Priority                   int    `json:"priority"`
-			SentAt                     string `json:"sent-at"`
-			XReceivedFrom              []struct {
-				ClusterName string `json:"cluster-name"`
-				Exchange    string `json:"exchange"`
-				Redelivered bool   `json:"redelivered"`
-				URI         string `json:"uri"`
-			} `json:"x-received-from"`
-		} `json:"headers"`
-		MessageID string      `json:"message_id"`
-		Priority  interface{} `json:"priority"`
-		ReplyTo   interface{} `json:"reply_to"`
-		Timestamp interface{} `json:"timestamp"`
-		Type      interface{} `json:"type"`
-		UserID    interface{} `json:"user_id"`
-	} `json:"_properties"`
 	Body struct {
-		Build   int    `json:"build"`
-		Chroot  string `json:"chroot"`
-		Copr    string `json:"copr"`
-		IP      string `json:"ip"`
-		Owner   string `json:"owner"`
-		PID     int    `json:"pid"`
-		Pkg     string `json:"pkg"`
-		Status  int    `json:"status"`
-		User    string `json:"user"`
-		Version string `json:"version"`
-		What    string `json:"what"`
-		Who     string `json:"who"`
+		User    string      `json:"user"`
+		Copr    string      `json:"copr"`
+		Owner   string      `json:"owner"`
+		Pkg     interface{} `json:"pkg"`
+		Build   int         `json:"build"`
+		Chroot  string      `json:"chroot"`
+		Version interface{} `json:"version"`
+		Status  int         `json:"status"`
+		IP      string      `json:"ip"`
+		Who     string      `json:"who"`
+		Pid     int         `json:"pid"`
+		What    string      `json:"what"`
 	} `json:"body"`
-	Queue    string `json:"queue"`
-	Severity int    `json:"severity"`
-	Topic    string `json:"topic"`
+	Headers struct {
+		OpenEulerMessagingSchema string `json:"openEuler_messaging_schema"`
+		SentAt                   string `json:"sent-at"`
+	} `json:"headers"`
+	ID    string `json:"id"`
+	Topic string `json:"topic"`
 }
 
 func (raw *EurBuildMessageRaw) Flatten() map[string]interface{} {
@@ -94,7 +69,7 @@ func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.Trans
 	case "type":
 		event.SetType(result)
 	case "dataContentType":
-		event.SetDataContentType(result)
+		event.SetDataContentType(cloudevents.ApplicationCloudEventsBatchJSON)
 	case "specVersion":
 		event.SetSpecVersion(result)
 	case "time":
@@ -104,5 +79,9 @@ func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.Trans
 		event.SetExtension("user", result)
 	case "sourceUrl":
 		event.SetExtension("sourceurl", result)
+	case "title":
+		event.SetExtension("title", result)
+	case "summary":
+		event.SetExtension("summary", result)
 	}
 }

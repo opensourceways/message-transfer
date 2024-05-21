@@ -20,12 +20,12 @@ type MessageCloudEventDO struct {
 	User            string         `gorm:"column:user"`
 	SourceUrl       string         `gorm:"column:source_url"`
 	DataJson        datatypes.JSON `gorm:"column:data_json"`
-	Title           string         `gorm:"column:Title"`
-	Summary         string         `gorm:"column:Summary"`
+	Title           string         `gorm:"column:title"`
+	Summary         string         `gorm:"column:summary"`
 }
 
 func (m *MessageCloudEventDO) TableName() string {
-	return "message_center.cloud_event_message"
+	return "test_message_center.message_center.cloud_event_message"
 }
 
 type SubScribeConfigDO struct {

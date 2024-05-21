@@ -34,7 +34,8 @@ func (h EurGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim
 		}
 		eurBuildEvent := raw.ToCloudEventByConfig(message.Topic)
 		if eurBuildEvent.ID() == "" {
-			return nil
+			session.MarkMessage(message, "")
+			continue
 		}
 		kafkaSendErr := kafka.SendMsg("eur_build_event", &eurBuildEvent)
 		if kafkaSendErr != nil {

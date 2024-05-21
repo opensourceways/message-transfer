@@ -1,6 +1,5 @@
 package main
 
-import "C"
 import (
 	"github.com/opensourceways/server-common-lib/logrusutil"
 	"github.com/sirupsen/logrus"
@@ -35,9 +34,6 @@ func main() {
 	}
 
 	go func() {
-		service.SubscribeGiteeRaw()
-	}()
-	go func() {
 		service.SubscribeEurRaw()
 	}()
 	<-sig
@@ -47,4 +43,5 @@ func initConfig(cfg *config.Config) {
 	pgCfg := postgresql.NewTestConfig()
 	pgCfg.SetDefault()
 	cfg.Postgresql = pgCfg
+	cfg.Kafka.SetDefault()
 }
