@@ -1,8 +1,8 @@
 package do
 
 import (
+	"github.com/opensourceways/message-transfer/common/postgresql"
 	"gorm.io/datatypes"
-	"message-transfer/common/postgresql"
 	"time"
 )
 

@@ -6,7 +6,7 @@ import (
 	flattener "github.com/anshal21/json-flattener"
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"message-transfer/models/bo"
+	"github.com/opensourceways/message-transfer/models/bo"
 	"text/template"
 )
 

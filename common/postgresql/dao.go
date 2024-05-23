@@ -15,8 +15,8 @@ import (
 	"github.com/lib/pq"
 	"gorm.io/gorm"
 
-	"message-transfer/common/domain"
-	"message-transfer/utils"
+	"github.com/opensourceways/message-transfer/common/domain"
+	"github.com/opensourceways/message-transfer/utils"
 )
 
 // Impl is an interface for database operations.

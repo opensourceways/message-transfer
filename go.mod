@@ -1,4 +1,4 @@
-module message-transfer
+module github.com/opensourceways/message-transfer
 
 require (
 	github.com/IBM/sarama v1.43.1

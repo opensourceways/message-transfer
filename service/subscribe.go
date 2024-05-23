@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/IBM/sarama"
-	"message-transfer/common/kafka"
-	"message-transfer/service/transfer"
+	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/service/transfer"
 )
 
 func SubscribeEurRaw() {

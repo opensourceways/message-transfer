@@ -1,7 +1,7 @@
 package bo
 
 import (
-	"message-transfer/common/postgresql"
+	"github.com/opensourceways/message-transfer/common/postgresql"
 )
 
 type TransferConfig struct {

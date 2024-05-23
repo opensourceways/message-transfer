@@ -6,10 +6,10 @@ Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved
 package config
 
 import (
-	common "message-transfer/common/config"
-	"message-transfer/common/kafka"
-	"message-transfer/common/postgresql"
-	"message-transfer/utils"
+	common "github.com/opensourceways/message-transfer/common/config"
+	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/common/postgresql"
+	"github.com/opensourceways/message-transfer/utils"
 	"os"
 )
 

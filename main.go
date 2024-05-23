@@ -1,12 +1,12 @@
 package main
 
 import (
+	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/common/postgresql"
+	"github.com/opensourceways/message-transfer/config"
+	"github.com/opensourceways/message-transfer/service"
 	"github.com/opensourceways/server-common-lib/logrusutil"
 	"github.com/sirupsen/logrus"
-	"message-transfer/common/kafka"
-	"message-transfer/common/postgresql"
-	"message-transfer/config"
-	"message-transfer/service"
 	"os"
 	"os/signal"
 	"syscall"

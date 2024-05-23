@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/IBM/sarama"
-	"message-transfer/common/kafka"
-	"message-transfer/models/dto"
+	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/models/dto"
 )
 
 type EurHandler struct{}

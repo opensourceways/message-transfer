@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"message-transfer/common/postgresql"
-	"message-transfer/models/do"
+	"github.com/opensourceways/message-transfer/common/postgresql"
+	"github.com/opensourceways/message-transfer/models/do"
 )
 
 type CloudEvents struct {
