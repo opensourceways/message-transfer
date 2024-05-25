@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/service"
+	"github.com/opensourceways/message-transfer/utils"
 	"github.com/opensourceways/server-common-lib/logrusutil"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -16,7 +18,7 @@ func main() {
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
 
-	logrusutil.ComponentInit("messageAdapter-collect")
+	logrusutil.ComponentInit("message-transfer")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
 	cfg := new(config.Config)
@@ -40,8 +42,13 @@ func main() {
 }
 
 func initConfig(cfg *config.Config) {
-	pgCfg := postgresql.NewTestConfig()
-	pgCfg.SetDefault()
-	cfg.Postgresql = pgCfg
-	cfg.Kafka.SetDefault()
+	if err := utils.LoadFromYaml("config/conf.yaml", cfg); err != nil {
+		logrus.Error("Config初始化失败, err:", err)
+		return
+	}
+	//pgCfg := postgresql.NewTestConfig()
+	//pgCfg.SetDefault()
+	//cfg.Postgresql = pgCfg
+	//cfg.Kafka.SetDefault()
+	fmt.Println(cfg)
 }
