@@ -1,5 +1,6 @@
-host: "182.160.6.195:9094"
-topic: "eur_build_raw"
-group: "message_transfer"
-offset: -1
-
+consume:
+  host: 182.160.6.195:9094
+  topic: eur_build_raw
+  group: message-transfer
+  offset: -1
+publish : eur_build_event

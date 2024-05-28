@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/IBM/sarama"
 	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/models/dto"
 )
 
@@ -37,7 +38,7 @@ func (h EurGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim
 			session.MarkMessage(message, "")
 			continue
 		}
-		kafkaSendErr := kafka.SendMsg("eur_build_event", &eurBuildEvent)
+		kafkaSendErr := kafka.SendMsg(config.EurBuildConfigInstance.Publish, &eurBuildEvent)
 		if kafkaSendErr != nil {
 			return kafkaSendErr
 		}

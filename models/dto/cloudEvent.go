@@ -6,6 +6,7 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/models/do"
+	"gorm.io/gorm/clause"
 )
 
 type CloudEvents struct {
@@ -44,8 +45,9 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 }
 
 func (event CloudEvents) SaveDb() {
-	do := event.toCloudEventDO()
-	if postgresql.DB().Model(&do).Where("source=?", do.Source, "event_id = ?", do.EventId).Updates(&do).RowsAffected == 0 {
-		postgresql.DB().Create(&do)
-	}
+	eventDO := event.toCloudEventDO()
+	postgresql.DB().Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
+		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title"}),
+	}).Create(&eventDO)
 }

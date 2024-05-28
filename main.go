@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/config"
@@ -9,22 +8,15 @@ import (
 	"github.com/opensourceways/message-transfer/utils"
 	"github.com/opensourceways/server-common-lib/logrusutil"
 	"github.com/sirupsen/logrus"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
-
 	logrusutil.ComponentInit("message-transfer")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
 	cfg := new(config.Config)
 	initConfig(cfg)
 
-	defer kafka.Exit()
 	if err := postgresql.Init(&cfg.Postgresql, false); err != nil {
 		logrus.Errorf("init postgresql failed, err:%s", err.Error())
 		return
@@ -38,7 +30,8 @@ func main() {
 	go func() {
 		service.SubscribeEurRaw()
 	}()
-	<-sig
+
+	select {}
 }
 
 func initConfig(cfg *config.Config) {
@@ -46,9 +39,4 @@ func initConfig(cfg *config.Config) {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
-	//pgCfg := postgresql.NewTestConfig()
-	//pgCfg.SetDefault()
-	//cfg.Postgresql = pgCfg
-	//cfg.Kafka.SetDefault()
-	fmt.Println(cfg)
 }
