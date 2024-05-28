@@ -1,13 +1,12 @@
 package service
 
 import (
-	"github.com/opensourceways/message-transfer/common/kafka"
+	kfklib "github.com/opensourceways/kafka-lib/agent"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/service/transfer"
 )
 
 func SubscribeEurRaw() {
 	config.InitEurBuildConfig()
-	h := transfer.EurGroupHandler{}
-	kafka.ConsumeGroup(config.EurBuildConfigInstance.Consume, &h)
+	_ = kfklib.Subscribe(config.EurBuildConfigInstance.Kafka.Group, transfer.Handle, []string{config.EurBuildConfigInstance.Kafka.Topic})
 }

@@ -9,8 +9,7 @@ import (
 var EurBuildConfigInstance EurBuildConfig
 
 type EurBuildConfig struct {
-	Consume kafka.ConsumeConfig `yaml:"consume"`
-	Publish string              `yaml:"publish"`
+	Kafka kafka.ConsumeConfig `yaml:"kafka"`
 }
 
 func InitEurBuildConfig() {

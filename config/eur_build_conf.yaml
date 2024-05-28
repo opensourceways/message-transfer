@@ -1,6 +1,4 @@
-consume:
-  host: 182.160.6.195:9094
+kafka:
   topic: eur_build_raw
+  publish : eur_build_event
   group: message-transfer
-  offset: -1
-publish : eur_build_event

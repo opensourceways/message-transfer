@@ -9,13 +9,16 @@ import (
 	"fmt"
 	kfklib "github.com/opensourceways/kafka-lib/agent"
 	"github.com/opensourceways/message-transfer/models/message"
+	"github.com/sirupsen/logrus"
 )
 
 // sendMsg is a method on the messageAdapter struct that takes an EventMessage
 // and sends it to the ModelCreate topic.
 
 func SendMsg(topic string, e message.EventMessage) error {
-	return send(topic, e)
+	res := send(topic, e)
+	logrus.Info("send to kafka success topic = " + topic)
+	return res
 }
 
 func send(topic string, v message.EventMessage) error {
