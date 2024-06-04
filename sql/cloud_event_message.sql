@@ -1,6 +1,6 @@
 create table message_center.cloud_event_message
 (
-    id                bigserial not null
+    id                bigserial
         constraint message_cloud_event_pk
             primary key,
     source            text,
@@ -16,7 +16,9 @@ create table message_center.cloud_event_message
     "user"            text,
     source_url        text,
     title             text,
-    summary           text
+    summary           text,
+    constraint message_source_eventid_pk
+        unique (source, event_id)
 );
 
 comment on table message_center.cloud_event_message is '清洗后的标准消息';
@@ -38,7 +40,3 @@ comment on column message_center.cloud_event_message.event_id is '事件id';
 comment on column message_center.cloud_event_message.title is '标题';
 
 comment on column message_center.cloud_event_message.summary is '摘要';
-
-
-
-

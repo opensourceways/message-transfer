@@ -41,6 +41,10 @@ func (raw *EurBuildMessageRaw) Flatten() map[string]interface{} {
 	return flatMap
 }
 
+/*
+*
+读取数据库的配置，把原始消息转换成标准的cloudevents字段
+*/
 func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
@@ -53,6 +57,10 @@ func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEve
 	return newEvent
 }
 
+/*
+*
+挨个字段做映射
+*/
 func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	t := template.Must(template.New("example").Parse(tmpl))

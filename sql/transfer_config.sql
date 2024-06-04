@@ -1,4 +1,4 @@
-create table transfer_config
+create table message_center.transfer_config
 (
     id           serial
         constraint transfer_config_pk
@@ -11,4 +11,4 @@ create table transfer_config
     is_deleted   boolean
 );
 
-comment on column transfer_config.source_topic is '消息源';
+comment on column message_center.transfer_config.source_topic is '消息源';
