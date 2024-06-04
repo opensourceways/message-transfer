@@ -11,7 +11,13 @@ RUN cd /go/src/github.com/opensourceways/message-transfer && CGO_ENABLED=1 go bu
 
 # copy binary config and utils
 FROM openeuler/openeuler:22.03
+RUN dnf -y update && \
+    dnf in -y shadow && \
+    groupadd -g 1000 message && \
+    useradd -u 1000 -g defect -s /bin/bash -m message
 
-COPY --from=BUILDER /go/src/github.com/opensourceways/message-transfer /opt/app
+USER message
+
+COPY  --chown=defect --from=BUILDER /go/src/github.com/opensourceways/message-transfer /opt/app
 WORKDIR /opt/app/
 ENTRYPOINT ["/opt/app/message-transfer"]

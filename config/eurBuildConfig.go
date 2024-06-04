@@ -12,9 +12,9 @@ type EurBuildConfig struct {
 	Kafka kafka.ConsumeConfig `yaml:"kafka"`
 }
 
-func InitEurBuildConfig() {
+func InitEurBuildConfig(configFile string) {
 	cfg := new(EurBuildConfig)
-	if err := utils.LoadFromYaml("config/eur_build_conf.yaml", cfg); err != nil {
+	if err := utils.LoadFromYaml(configFile, cfg); err != nil {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
