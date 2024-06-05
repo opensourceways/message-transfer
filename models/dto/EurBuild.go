@@ -60,6 +60,7 @@ func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEve
 /*
 *
 挨个字段做映射
+user,sourceurl,title,summary是扩展字段
 */
 func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
