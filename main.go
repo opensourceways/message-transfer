@@ -28,8 +28,11 @@ func main() {
 		return
 	}
 
+	//go func() {
+	//	service.SubscribeEurRaw()
+	//}()
 	go func() {
-		service.SubscribeEurRaw()
+		service.SubscribeGiteeIssue()
 	}()
 
 	select {}
@@ -45,12 +48,16 @@ func initConfig() *config.Config {
 	}
 	cfg := new(config.Config)
 
-	config.InitEurBuildConfig(o.EurBuildConfig)
-
 	if err := utils.LoadFromYaml(o.Config, cfg); err != nil {
 		logrus.Error("Config初始化失败, err:", err)
 	}
+	initTransferConfig(o)
 	return cfg
+}
+
+func initTransferConfig(o Options) {
+	config.InitEurBuildConfig(o.EurBuildConfig)
+	config.InitGiteeConfig(o.GiteeConfig)
 }
 
 /*
@@ -67,9 +74,11 @@ func gatherOptions(fs *flag.FlagSet, args ...string) (Options, error) {
 type Options struct {
 	Config         string
 	EurBuildConfig string
+	GiteeConfig    string
 }
 
 func (o *Options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.Config, "config-file", "", "Path to config file.")
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
+	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
 }

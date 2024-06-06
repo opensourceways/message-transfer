@@ -9,5 +9,10 @@ import (
 
 func SubscribeEurRaw() {
 	logrus.Info("subscribing to eur topic")
-	_ = kfklib.Subscribe(config.EurBuildConfigInstance.Kafka.Group, transfer.Handle, []string{config.EurBuildConfigInstance.Kafka.Topic})
+	_ = kfklib.Subscribe(config.EurBuildConfigInstance.Kafka.Group, transfer.EurBuildHandle, []string{config.EurBuildConfigInstance.Kafka.Topic})
+}
+
+func SubscribeGiteeIssue() {
+	logrus.Info("subscribing to issue topic")
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, transfer.GiteeHandle, []string{config.GiteeConfigInstance.Issue.Topic})
 }

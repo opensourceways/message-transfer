@@ -1,0 +1,4 @@
+issue:
+  topic: gitee_issue_raw
+  publish : gitee_issue_event
+  group: message-transfer

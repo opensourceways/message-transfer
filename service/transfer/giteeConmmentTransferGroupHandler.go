@@ -2,44 +2,27 @@ package transfer
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/IBM/sarama"
 	"github.com/opensourceways/message-transfer/common/kafka"
+	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/models/dto"
 )
 
 type GiteeHandler struct{}
 
-func (giteeHandler *GiteeHandler) handle(message []byte) error {
-	fmt.Println(message)
-	return nil
-}
-
-type GiteeGroupHandler struct{}
-
-func (h GiteeGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
-	return nil
-}
-
-func (h GiteeGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
-	return nil
-}
-
-func (h GiteeGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	for message := range claim.Messages() {
-		var raw dto.Hook
-		msgBodyErr := json.Unmarshal(message.Value, &raw)
-		if msgBodyErr != nil {
-			return msgBodyErr
-		}
-		fmt.Println(raw)
-		event := raw.Comment.ToCloudEventCloudEvents()
-		kafkaSendErr := kafka.SendMsg("gitee_comment_event", &event)
-		if kafkaSendErr != nil {
-			return kafkaSendErr
-		}
-		event.SaveDb()
-		session.MarkMessage(message, "")
+func GiteeHandle(payload []byte, _ map[string]string) error {
+	var raw dto.GiteeIssueRaw
+	msgBodyErr := json.Unmarshal(payload, &raw)
+	if msgBodyErr != nil {
+		return msgBodyErr
 	}
+	eurBuildEvent := raw.ToCloudEventByConfig(config.EurBuildConfigInstance.Kafka.Topic)
+	if eurBuildEvent.ID() == "" {
+		return nil
+	}
+	kafkaSendErr := kafka.SendMsg(config.EurBuildConfigInstance.Kafka.Publish, &eurBuildEvent)
+	if kafkaSendErr != nil {
+		return kafkaSendErr
+	}
+	eurBuildEvent.SaveDb()
 	return nil
 }
