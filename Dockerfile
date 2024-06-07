@@ -19,4 +19,4 @@ RUN dnf -y update && \
 USER message-center
 COPY  --chown=message-center --from=BUILDER /go/src/github.com/opensourceways/messgae-transfer /opt/app
 WORKDIR /opt/app/
-ENTRYPOINT ["/opt/app/messgae-transfer"]
+ENTRYPOINT ["/opt/app/message-transfer"]
