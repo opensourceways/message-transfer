@@ -15,11 +15,11 @@ func GiteeHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	eurBuildEvent := raw.ToCloudEventByConfig(config.EurBuildConfigInstance.Kafka.Topic)
+	eurBuildEvent := raw.ToCloudEventByConfig(config.GiteeConfigInstance.Issue.Topic)
 	if eurBuildEvent.ID() == "" {
 		return nil
 	}
-	kafkaSendErr := kafka.SendMsg(config.EurBuildConfigInstance.Kafka.Publish, &eurBuildEvent)
+	kafkaSendErr := kafka.SendMsg(config.GiteeConfigInstance.Issue.Publish, &eurBuildEvent)
 	if kafkaSendErr != nil {
 		return kafkaSendErr
 	}

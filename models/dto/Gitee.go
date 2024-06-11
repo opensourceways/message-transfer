@@ -58,8 +58,6 @@ func (raw *GiteeIssueRaw) transferField(event *CloudEvents, config bo.TransferCo
 		event.SetDataSchema(result)
 	case "type":
 		event.SetType(result)
-	case "dataContentType":
-		event.SetDataContentType(cloudevents.ApplicationCloudEventsBatchJSON)
 	case "specVersion":
 		event.SetSpecVersion(result)
 	case "time":
