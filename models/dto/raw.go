@@ -3,37 +3,40 @@ package dto
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	flattener "github.com/anshal21/json-flattener"
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
+	"reflect"
 	"text/template"
 )
 
-type EurBuildMessageRaw struct {
-	Body struct {
-		User    string      `json:"user"`
-		Copr    string      `json:"copr"`
-		Owner   string      `json:"owner"`
-		Pkg     interface{} `json:"pkg"`
-		Build   int         `json:"build"`
-		Chroot  string      `json:"chroot"`
-		Version interface{} `json:"version"`
-		Status  int         `json:"status"`
-		IP      string      `json:"ip"`
-		Who     string      `json:"who"`
-		Pid     int         `json:"pid"`
-		What    string      `json:"what"`
-	} `json:"body"`
-	Headers struct {
-		OpenEulerMessagingSchema string `json:"openEuler_messaging_schema"`
-		SentAt                   string `json:"sent-at"`
-	} `json:"headers"`
-	ID    string `json:"id"`
-	Topic string `json:"topic"`
+type Raw map[string]interface{}
+
+func ToMap(in interface{}) (Raw, error) {
+	out := make(map[string]interface{})
+	v := reflect.ValueOf(in)
+
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	if v.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("ToMap only accepts struct or struct pointer; got %T", v)
+	}
+
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		fi := t.Field(i)
+		out[fi.Name] = v.Field(i).Interface()
+	}
+
+	return out, nil
 }
 
-func (raw *EurBuildMessageRaw) Flatten() map[string]interface{} {
+func (raw *Raw) Flatten() map[string]interface{} {
 	s, _ := json.Marshal(raw)
 	flatJSON, _ := flattener.FlattenJSON(string(s), flattener.DotSeparator)
 	flatMap := make(map[string]interface{})
@@ -45,7 +48,7 @@ func (raw *EurBuildMessageRaw) Flatten() map[string]interface{} {
 *
 读取数据库的配置，把原始消息转换成标准的cloudevents字段
 */
-func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
+func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
 	if configs != nil {
@@ -61,7 +64,7 @@ func (raw *EurBuildMessageRaw) ToCloudEventByConfig(sourceTopic string) CloudEve
 *
 挨个字段做映射
 */
-func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.TransferConfig) {
+func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	t := template.Must(template.New("example").Parse(tmpl))
 	var resultBuffer bytes.Buffer
@@ -76,8 +79,6 @@ func (raw *EurBuildMessageRaw) transferField(event *CloudEvents, config bo.Trans
 		event.SetDataSchema(result)
 	case "type":
 		event.SetType(result)
-	case "dataContentType":
-		event.SetDataContentType(cloudevents.ApplicationCloudEventsBatchJSON)
 	case "specVersion":
 		event.SetSpecVersion(result)
 	case "time":

@@ -10,6 +10,9 @@ var GiteeConfigInstance GiteeConfig
 
 type GiteeConfig struct {
 	Issue kafka.ConsumeConfig `yaml:"issue"`
+	Push  kafka.ConsumeConfig `yaml:"push"`
+	PR    kafka.ConsumeConfig `yaml:"pr"`
+	Note  kafka.ConsumeConfig `yaml:"note"`
 }
 
 func InitGiteeConfig(configFile string) {
