@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -149,4 +150,34 @@ func toString(value interface{}) string {
 	default:
 		return fmt.Sprintf("%v", v)
 	}
+}
+
+func StructToMap(obj interface{}) map[string]interface{} {
+	// 创建一个 map 用于存储结构体字段和值
+	result := make(map[string]interface{})
+
+	// 获取结构体的反射值对象和类型对象
+	val := reflect.ValueOf(obj)
+	typ := reflect.TypeOf(obj)
+
+	// 确保传入的是结构体或结构体指针
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+		typ = typ.Elem()
+	}
+
+	// 遍历结构体的字段
+	for i := 0; i < val.NumField(); i++ {
+		// 获取字段标签中的 JSON 名称
+		tag := typ.Field(i).Tag.Get("json")
+		if tag == "" {
+			// 如果没有 JSON 标签，使用字段名
+			tag = typ.Field(i).Name
+		}
+
+		// 将字段名和字段值添加到 map 中
+		result[tag] = val.Field(i).Interface()
+	}
+
+	return result
 }
