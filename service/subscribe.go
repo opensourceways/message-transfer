@@ -18,15 +18,15 @@ func SubscribeGiteeIssue() {
 
 func SubscribeGiteePush() {
 	logrus.Info("subscribing to push topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, GiteePushHandle, []string{config.GiteeConfigInstance.Push.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Push.Group, GiteePushHandle, []string{config.GiteeConfigInstance.Push.Topic})
 }
 
 func SubscribeGiteePr() {
 	logrus.Info("subscribing to pr topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, GiteePrHandle, []string{config.GiteeConfigInstance.PR.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.PR.Group, GiteePrHandle, []string{config.GiteeConfigInstance.PR.Topic})
 }
 
 func SubscribeGiteeNote() {
 	logrus.Info("subscribing to note topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, GiteeNoteHandle, []string{config.GiteeConfigInstance.Note.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Note.Group, GiteeNoteHandle, []string{config.GiteeConfigInstance.Note.Topic})
 }
