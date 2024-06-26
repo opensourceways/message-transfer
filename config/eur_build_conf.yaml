@@ -1,0 +1,4 @@
+kafka:
+  topic: eur_build_raw
+  publish : eur_build_event
+  group: message-transfer

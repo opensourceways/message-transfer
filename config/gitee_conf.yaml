@@ -1,0 +1,19 @@
+issue:
+  topic: gitee_issue_raw
+  publish : gitee_issue_event
+  group: message-transfer
+
+push:
+  topic: gitee_push_raw
+  publish : gitee_push_event
+  group: message-transfer
+
+pr:
+  topic: gitee_pr_raw
+  publish : gitee_pr_event
+  group: message-transfer
+
+note:
+  topic: gitee_note_raw
+  publish : gitee_note_event
+  group: message-transfer
