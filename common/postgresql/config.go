@@ -24,18 +24,6 @@ type Config struct {
 	Code     errorCode `json:"error_code"`
 }
 
-func NewTestConfig() Config {
-	pgCfg := Config{
-		Host:     "49.0.247.41",
-		User:     "message_center",
-		Port:     30051,
-		Pwd:      "fG82Ab++h6HMTg==",
-		Database: "test_message_center",
-		Life:     1000,
-	}
-	return pgCfg
-}
-
 // SetDefault sets the default values for the Config.
 func (p *Config) SetDefault() {
 	if p.MaxConn <= 0 {
