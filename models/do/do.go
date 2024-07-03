@@ -22,6 +22,7 @@ type MessageCloudEventDO struct {
 	DataJson        datatypes.JSON `gorm:"column:data_json"`
 	Title           string         `gorm:"column:title"`
 	Summary         string         `gorm:"column:summary"`
+	SourceGroup     string         `gorm:"column:source_group"`
 }
 
 func (m *MessageCloudEventDO) TableName() string {

@@ -40,6 +40,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		SourceUrl:       event.Extensions()["sourceurl"].(string),
 		Title:           event.Extensions()["title"].(string),
 		Summary:         event.Extensions()["summary"].(string),
+		SourceGroup:     event.Extensions()["sourcegroup"].(string),
 	}
 	return messageCloudEventDO
 }
@@ -48,6 +49,6 @@ func (event CloudEvents) SaveDb() {
 	eventDO := event.toCloudEventDO()
 	postgresql.DB().Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
-		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title"}),
+		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title"}),
 	}).Create(&eventDO)
 }

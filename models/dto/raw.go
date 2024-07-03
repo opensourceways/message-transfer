@@ -89,6 +89,8 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 		event.SetExtension("user", result)
 	case "sourceUrl":
 		event.SetExtension("sourceurl", result)
+	case "sourceGroup":
+		event.SetExtension("sourcegroup", result)
 	case "title":
 		event.SetExtension("title", result)
 	case "summary":
