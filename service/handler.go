@@ -26,12 +26,8 @@ func GiteeIssueHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap, err := dto.ToMap(raw)
-	if err != nil {
-		return err
-	} else {
-		return handle(rawMap, config.GiteeConfigInstance.Issue)
-	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.GiteeConfigInstance.Issue)
 }
 
 func GiteePushHandle(payload []byte, _ map[string]string) error {
@@ -40,12 +36,8 @@ func GiteePushHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap, err := dto.ToMap(raw)
-	if err != nil {
-		return err
-	} else {
-		return handle(rawMap, config.GiteeConfigInstance.Push)
-	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.GiteeConfigInstance.Push)
 }
 
 func GiteePrHandle(payload []byte, _ map[string]string) error {
@@ -54,12 +46,8 @@ func GiteePrHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap, err := dto.ToMap(raw)
-	if err != nil {
-		return err
-	} else {
-		return handle(rawMap, config.GiteeConfigInstance.PR)
-	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.GiteeConfigInstance.PR)
 }
 
 func GiteeNoteHandle(payload []byte, _ map[string]string) error {
@@ -68,12 +56,8 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap, err := dto.ToMap(raw)
-	if err != nil {
-		return err
-	} else {
-		return handle(rawMap, config.GiteeConfigInstance.Note)
-	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.GiteeConfigInstance.Note)
 }
 
 func EurBuildHandle(payload []byte, _ map[string]string) error {
@@ -82,10 +66,6 @@ func EurBuildHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap, err := dto.ToMap(raw)
-	if err != nil {
-		return err
-	} else {
-		return handle(rawMap, config.EurBuildConfigInstance.Kafka)
-	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
 }
