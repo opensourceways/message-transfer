@@ -14,10 +14,11 @@ import (
 
 type Raw map[string]interface{}
 
-func structToMap(obj interface{}) map[string]interface{} {
+func StructToMap(obj interface{}) map[string]interface{} {
 	objValue := reflect.ValueOf(obj)
 	objType := reflect.TypeOf(obj)
 
+	// 如果是指针，解引用
 	if objValue.Kind() == reflect.Ptr {
 		objValue = objValue.Elem()
 		objType = objType.Elem()
@@ -29,9 +30,18 @@ func structToMap(obj interface{}) map[string]interface{} {
 		fieldType := objType.Field(i)
 		fieldName := fieldType.Name
 
+		// 如果字段是指针，解引用
+		for field.Kind() == reflect.Ptr {
+			if field.IsNil() {
+				result[fieldName] = nil
+				continue
+			}
+			field = field.Elem()
+		}
+
 		switch field.Kind() {
 		case reflect.Struct:
-			result[fieldName] = structToMap(field.Interface())
+			result[fieldName] = StructToMap(field.Interface())
 		default:
 			result[fieldName] = field.Interface()
 		}
