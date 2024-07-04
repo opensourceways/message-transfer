@@ -14,6 +14,31 @@ import (
 
 type Raw map[string]interface{}
 
+func structToMap(obj interface{}) map[string]interface{} {
+	objValue := reflect.ValueOf(obj)
+	objType := reflect.TypeOf(obj)
+
+	if objValue.Kind() == reflect.Ptr {
+		objValue = objValue.Elem()
+		objType = objType.Elem()
+	}
+
+	result := make(map[string]interface{})
+	for i := 0; i < objValue.NumField(); i++ {
+		field := objValue.Field(i)
+		fieldType := objType.Field(i)
+		fieldName := fieldType.Name
+
+		switch field.Kind() {
+		case reflect.Struct:
+			result[fieldName] = structToMap(field.Interface())
+		default:
+			result[fieldName] = field.Interface()
+		}
+	}
+	return result
+}
+
 func ToMap(in interface{}) (Raw, error) {
 	out := make(map[string]interface{})
 	v := reflect.ValueOf(in)
