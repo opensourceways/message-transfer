@@ -30,20 +30,23 @@ func main() {
 		return
 	}
 
+	//go func() {
+	//	service.SubscribeEurRaw()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeIssue()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteePush()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteePr()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeNote()
+	//}()
 	go func() {
-		service.SubscribeEurRaw()
-	}()
-	go func() {
-		service.SubscribeGiteeIssue()
-	}()
-	go func() {
-		service.SubscribeGiteePush()
-	}()
-	go func() {
-		service.SubscribeGiteePr()
-	}()
-	go func() {
-		service.SubscribeGiteeNote()
+		service.SubscribeOpenEulerMeeting()
 	}()
 
 	select {}
@@ -69,6 +72,7 @@ func initConfig() *config.Config {
 func initTransferConfig(o Options) {
 	config.InitGiteeConfig(o.GiteeConfig)
 	config.InitEurBuildConfig(o.EurBuildConfig)
+	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
 }
 
 /*
@@ -83,13 +87,15 @@ func gatherOptions(fs *flag.FlagSet, args ...string) (Options, error) {
 }
 
 type Options struct {
-	Config         string
-	EurBuildConfig string
-	GiteeConfig    string
+	Config                 string
+	EurBuildConfig         string
+	GiteeConfig            string
+	OpenEulerMeetingConfig string
 }
 
 func (o *Options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.Config, "config-file", "", "Path to config file.")
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
 	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
+	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "", "Path to gitee config file.")
 }
