@@ -30,9 +30,9 @@ func main() {
 		return
 	}
 
-	//go func() {
-	//	service.SubscribeEurRaw()
-	//}()
+	go func() {
+		service.SubscribeEurRaw()
+	}()
 	//go func() {
 	//	service.SubscribeGiteeIssue()
 	//}()
@@ -45,9 +45,9 @@ func main() {
 	//go func() {
 	//	service.SubscribeGiteeNote()
 	//}()
-	go func() {
-		service.SubscribeOpenEulerMeeting()
-	}()
+	//go func() {
+	//	service.SubscribeOpenEulerMeeting()
+	//}()
 
 	select {}
 }

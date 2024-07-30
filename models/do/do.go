@@ -23,6 +23,7 @@ type MessageCloudEventDO struct {
 	Title           string         `gorm:"column:title"`
 	Summary         string         `gorm:"column:summary"`
 	SourceGroup     string         `gorm:"column:source_group"`
+	RelatedUsers    string         `gorm:"column:related_users"`
 }
 
 func (m *MessageCloudEventDO) TableName() string {
