@@ -30,3 +30,8 @@ func SubscribeGiteeNote() {
 	logrus.Info("subscribing to note topic")
 	_ = kfklib.Subscribe(config.GiteeConfigInstance.Note.Group, GiteeNoteHandle, []string{config.GiteeConfigInstance.Note.Topic})
 }
+
+func SubscribeOpenEulerMeeting() {
+	logrus.Info("subscribing to openEuler meeting topic")
+	_ = kfklib.Subscribe(config.MeetingConfigInstance.Kafka.Group, OpenEulerMeetingHandle, []string{config.MeetingConfigInstance.Kafka.Topic})
+}
