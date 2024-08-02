@@ -6,6 +6,7 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/models/do"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm/clause"
 )
 
@@ -25,8 +26,19 @@ func (event CloudEvents) Message() ([]byte, error) {
 	return body, err
 }
 
+func (event CloudEvents) SaveDb() {
+	eventDO := event.toCloudEventDO()
+	res := postgresql.DB().Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
+		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title", "related_users"}),
+	}).Create(&eventDO)
+	fmt.Println(res)
+	logrus.Info("插入成功")
+}
+
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	fmt.Println(event)
+	//relatedUsers := strings.Split(event.Extensions()["relatedusers"].(string), ",")
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
@@ -41,14 +53,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		Title:           event.Extensions()["title"].(string),
 		Summary:         event.Extensions()["summary"].(string),
 		SourceGroup:     event.Extensions()["sourcegroup"].(string),
+		RelatedUsers:    "{" + event.Extensions()["relatedusers"].(string) + "}",
 	}
 	return messageCloudEventDO
-}
-
-func (event CloudEvents) SaveDb() {
-	eventDO := event.toCloudEventDO()
-	postgresql.DB().Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
-		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title"}),
-	}).Create(&eventDO)
 }

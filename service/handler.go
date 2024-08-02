@@ -69,3 +69,13 @@ func EurBuildHandle(payload []byte, _ map[string]string) error {
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
 }
+
+func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
+	var raw dto.OpenEulerMeetingRaw
+	msgBodyErr := json.Unmarshal(payload, &raw)
+	if msgBodyErr != nil {
+		return msgBodyErr
+	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.MeetingConfigInstance.Kafka)
+}
