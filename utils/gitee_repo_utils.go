@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-
-	"github.com/sirupsen/logrus"
 )
 
 type Collaborator struct {
@@ -42,10 +40,9 @@ const (
 	collaboratorsUrl = "https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d"
 	watchersUrl      = "https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d"
 	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers"
-	getUsersUrl      = "https://gitee.com/api/v5/users/%s"
 )
 
-func GetAllCollaborators(owner, repo string) ([]Collaborator, error) {
+func GetAllAdmins(owner, repo string) ([]string, error) {
 	var allCollaborators []Collaborator
 	page := 1
 	perPage := 100
@@ -88,10 +85,16 @@ func GetAllCollaborators(owner, repo string) ([]Collaborator, error) {
 		page++
 	}
 
-	return allCollaborators, nil
+	var logins []string
+	for _, collaborator := range allCollaborators {
+		if collaborator.Permissions.IsAdmin() {
+			logins = append(logins, collaborator.Login)
+		}
+	}
+	return logins, nil
 }
 
-func GetAllWatchers(owner, repo string) ([]User, error) {
+func GetAllWatchers(owner, repo string) ([]string, error) {
 	var allWatchers []User
 	page := 1
 	perPage := 100
@@ -134,10 +137,14 @@ func GetAllWatchers(owner, repo string) ([]User, error) {
 		page++
 	}
 
-	return allWatchers, nil
+	var logins []string
+	for _, watcher := range allWatchers {
+		logins = append(logins, watcher.Login)
+	}
+	return logins, nil
 }
 
-func GetAllContributors(owner, repo string) ([]Contributor, error) {
+func GetAllContributors(owner, repo string) ([]string, error) {
 	var allContributors []Contributor
 	url := fmt.Sprintf(contributorsUrl, owner, repo, accessToken)
 	req, err := http.NewRequest("GET", url, nil)
@@ -163,35 +170,9 @@ func GetAllContributors(owner, repo string) ([]Contributor, error) {
 	}
 
 	allContributors = append(allContributors, members...)
-	for i := range allContributors {
-		allContributors[i].Name, _ = GetContributorLoginName(allContributors[i])
+	var logins []string
+	for _, contributor := range allContributors {
+		logins = append(logins, contributor.Name)
 	}
-	return allContributors, nil
-}
-
-func GetContributorLoginName(contributor Contributor) (string, error) {
-	url := fmt.Sprintf(getUsersUrl, contributor.Name)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return "", err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	var user User
-	err = json.Unmarshal(body, &user)
-	logrus.Errorf("the body is %v, the err is %v", string(body), err)
-	if err != nil {
-		return "", err
-	}
-	return user.Login, nil
+	return logins, nil
 }

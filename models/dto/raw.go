@@ -19,6 +19,11 @@ import (
 
 type Raw map[string]interface{}
 
+const (
+	giteeSource = "https://gitee.com"
+	eurSource   = "https://eur.openeuler.openatom.cn"
+)
+
 func StructToMap(obj interface{}) map[string]interface{} {
 	objValue := reflect.ValueOf(obj)
 	objType := reflect.TypeOf(obj)
@@ -103,25 +108,35 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 			raw.transferField(&newEvent, config)
 		}
 
-		raw.GetRelateUsers(&newEvent)
-
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
 }
 
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
-	//source := event.Source()
+	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
-
 	lSourceGroup := strings.Split(sourceGroup, "/")
 	owner, repo := lSourceGroup[0], lSourceGroup[1]
-	//allCollaborators, _ := utils.GetAllCollaborators(owner, repo)
-	//allWatchers, _ := utils.GetAllWatchers(owner, repo)
-	_, err := utils.GetAllContributors(owner, repo)
-	if err != nil {
-		return
+
+	if source == giteeSource {
+		giteeType := event.Type()
+		result := event.Extensions()["relatedusers"].([]string)
+		allAdmins, _ := utils.GetAllAdmins(owner, repo)
+		allContributors, _ := utils.GetAllContributors(owner, repo)
+		switch giteeType {
+		case "pr":
+			result = append(append(result, allAdmins...), allContributors...)
+		case "push":
+			result = append(result, allAdmins...)
+		case "issue":
+			result = append(result, allAdmins...)
+		}
+		event.SetExtension("relatedusers", result)
+	} else if source == eurSource {
+
 	}
+
 }
 
 /*
