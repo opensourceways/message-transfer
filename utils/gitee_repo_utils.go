@@ -9,23 +9,20 @@ import (
 )
 
 type Collaborator struct {
-	Id          int        `json:"id"`
-	Login       string     `json:"login"`
-	Name        string     `json:"name"`
-	Type        string     `json:"type"`
-	Permissions Permission `json:"permissions"`
-}
-type Watcher struct {
-	Id          int        `json:"id"`
-	Login       string     `json:"login"`
-	Name        string     `json:"name"`
-	Type        string     `json:"type"`
+	User
 	Permissions Permission `json:"permissions"`
 }
 type Contributor struct {
 	Email         string `json:"email"`
 	Name          string `json:"name"`
 	Contributions int    `json:"contributions"`
+}
+
+type User struct {
+	Id    int    `json:"id"`
+	Login string `json:"login"`
+	Name  string `json:"name"`
+	Type  string `json:"type"`
 }
 
 type Permission struct {
@@ -43,6 +40,7 @@ const (
 	collaboratorsUrl = "https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d"
 	watchersUrl      = "https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d"
 	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=authors"
+	getUsersUrl      = "https://gitee.com/api/v5/users/%s"
 )
 
 func GetAllCollaborators(owner, repo string) ([]Collaborator, error) {
@@ -91,8 +89,8 @@ func GetAllCollaborators(owner, repo string) ([]Collaborator, error) {
 	return allCollaborators, nil
 }
 
-func GetAllWatchers(owner, repo string) ([]Watcher, error) {
-	var allWatchers []Watcher
+func GetAllWatchers(owner, repo string) ([]User, error) {
+	var allWatchers []User
 	page := 1
 	perPage := 100
 
@@ -116,7 +114,7 @@ func GetAllWatchers(owner, repo string) ([]Watcher, error) {
 			return nil, err
 		}
 
-		var members []Watcher
+		var members []User
 		err = json.Unmarshal(body, &members)
 		if err != nil {
 			return nil, err
@@ -163,6 +161,34 @@ func GetAllContributors(owner, repo string) ([]Contributor, error) {
 	}
 
 	allContributors = append(allContributors, members...)
-
+	for i := range allContributors {
+		allContributors[i].Name, _ = GetContributorLoginName(allContributors[i])
+	}
 	return allContributors, nil
+}
+
+func GetContributorLoginName(contributor Contributor) (string, error) {
+	url := fmt.Sprintf(getUsersUrl, contributor.Name)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var user User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return "", err
+	}
+	return user.Login, nil
 }
