@@ -144,4 +144,8 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	case "relatedUsers":
 		event.SetExtension("relatedusers", result)
 	}
+
+	logrus.Infof("the event source is %v", event.Source())
+	logrus.Infof("the event sourgroup is %v", event.Extensions()["sourcegroup"].(string))
+
 }
