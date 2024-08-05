@@ -34,18 +34,18 @@ func main() {
 	go func() {
 		service.SubscribeEurRaw()
 	}()
-	//go func() {
-	//	service.SubscribeGiteeIssue()
-	//}()
-	//go func() {
-	//	service.SubscribeGiteePush()
-	//}()
-	//go func() {
-	//	service.SubscribeGiteePr()
-	//}()
-	//go func() {
-	//	service.SubscribeGiteeNote()
-	//}()
+	go func() {
+		service.SubscribeGiteeIssue()
+	}()
+	go func() {
+		service.SubscribeGiteePush()
+	}()
+	go func() {
+		service.SubscribeGiteePr()
+	}()
+	go func() {
+		service.SubscribeGiteeNote()
+	}()
 	//go func() {
 	//	service.SubscribeOpenEulerMeeting()
 	//}()
