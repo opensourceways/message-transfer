@@ -96,8 +96,6 @@ func (raw *Raw) Flatten() map[string]interface{} {
 func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
-	logrus.Infof("the raw data is %v", raw)
-	logrus.Infof("the flatten is %v", raw.Flatten())
 	if configs != nil {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
@@ -114,6 +112,7 @@ user,sourceurl,title,summary是扩展字段
 */
 func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
+	logrus.Infof("the tmpl is %v", tmpl)
 	t := template.Must(template.New("example").Parse(tmpl))
 	var resultBuffer bytes.Buffer
 	t.Execute(&resultBuffer, raw)
