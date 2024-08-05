@@ -164,10 +164,7 @@ func GetAllContributors(owner, repo string) ([]Contributor, error) {
 
 	allContributors = append(allContributors, members...)
 	for i := range allContributors {
-		allContributors[i].Name, err = GetContributorLoginName(allContributors[i])
-		if err != nil {
-			logrus.Errorf("the name is %s, the err is %v", allContributors[i].Name, err)
-		}
+		allContributors[i].Name, _ = GetContributorLoginName(allContributors[i])
 	}
 	return allContributors, nil
 }
@@ -192,6 +189,7 @@ func GetContributorLoginName(contributor Contributor) (string, error) {
 
 	var user User
 	err = json.Unmarshal(body, &user)
+	logrus.Errorf("the body is %v, the err is %v", string(body), err)
 	if err != nil {
 		return "", err
 	}
