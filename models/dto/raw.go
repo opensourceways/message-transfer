@@ -100,6 +100,10 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
+
+		logrus.Infof("the event source is %v", newEvent.Source())
+		logrus.Infof("the event sourgroup is %v", newEvent.Extensions()["sourcegroup"].(string))
+
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
@@ -144,8 +148,4 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	case "relatedUsers":
 		event.SetExtension("relatedusers", result)
 	}
-
-	logrus.Infof("the event source is %v", event.Source())
-	logrus.Infof("the event sourgroup is %v", event.Extensions()["sourcegroup"].(string))
-
 }
