@@ -31,17 +31,17 @@ type Permission struct {
 	Admin bool `json:"admin"`
 }
 
+type SigInfo struct {
+	Data SigData `json:"data"`
+}
+
+type SigData struct {
+	Maintainers []string `json:"maintainers"`
+}
+
 func (p *Permission) IsAdmin() bool {
 	return p.Admin
 }
-
-const (
-	accessToken      = "****"
-	collaboratorsUrl = "https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d"
-	watchersUrl      = "https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d"
-	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers"
-	getUserUrl       = "https://gitee.com/api/v5/users/%s?access_token=%s"
-)
 
 func GetAllAdmins(owner, repo string) ([]string, error) {
 	var allCollaborators []Collaborator
@@ -51,7 +51,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 	var totalCount int
 
 	for {
-		url := fmt.Sprintf(collaboratorsUrl, owner, repo, accessToken, page, perPage)
+		url := fmt.Sprintf(config.GiteeCollaboratorUrl, owner, repo, config.GiteeAccessToken, page, perPage)
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			return nil, err
@@ -61,7 +61,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		defer resp.Body.Close()
+		resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -84,6 +84,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 			break
 		}
 		page++
+		resp.Body.Close()
 	}
 
 	var logins []string
@@ -103,7 +104,7 @@ func GetAllWatchers(owner, repo string) ([]string, error) {
 	var totalCount int
 
 	for {
-		url := fmt.Sprintf(watchersUrl, owner, repo, accessToken, page, perPage)
+		url := fmt.Sprintf(config.GiteeWatcherUrl, owner, repo, config.GiteeAccessToken, page, perPage)
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			return nil, err
@@ -113,7 +114,6 @@ func GetAllWatchers(owner, repo string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		defer resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -136,6 +136,7 @@ func GetAllWatchers(owner, repo string) ([]string, error) {
 			break
 		}
 		page++
+		resp.Body.Close()
 	}
 
 	var logins []string
@@ -147,7 +148,7 @@ func GetAllWatchers(owner, repo string) ([]string, error) {
 
 func GetAllContributors(owner, repo string) ([]string, error) {
 	var allContributors []Contributor
-	url := fmt.Sprintf(contributorsUrl, owner, repo, accessToken)
+	url := fmt.Sprintf(config.GiteeContributorUrl, owner, repo, config.GiteeAccessToken)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -173,35 +174,34 @@ func GetAllContributors(owner, repo string) ([]string, error) {
 	allContributors = append(allContributors, members...)
 	var logins []string
 	for _, contributor := range allContributors {
-		loginName, _ := GetUserLoginName(contributor.Name)
-		logins = append(logins, loginName)
+		logins = append(logins, contributor.Name)
 	}
 	return logins, nil
 }
 
-func GetUserLoginName(name string) (string, error) {
-	url := fmt.Sprintf(getUserUrl, name, accessToken)
+func GetMaintainersBySig(sig string) ([]string, error) {
+	url := fmt.Sprintf(config.QuerySigInfo, sig)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var user User
-	err = json.Unmarshal(body, &user)
+	var sigInfo SigInfo
+	err = json.Unmarshal(body, &sigInfo)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return user.Login, nil
+	return sigInfo.Data.Maintainers, nil
 }

@@ -2,12 +2,16 @@ package service
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/models/dto"
+	"github.com/opensourceways/message-transfer/utils"
 )
 
 func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
+	time.Sleep(utils.GetConsumeSleepTime())
 	event := raw.ToCloudEventByConfig(cfg.Topic)
 	if event.ID() == "" {
 		return nil

@@ -20,8 +20,8 @@ import (
 type Raw map[string]interface{}
 
 const (
-	giteeSource = "https://gitee.com"
-	eurSource   = "https://eur.openeuler.openatom.cn"
+	giteeSource   = "https://gitee.com"
+	meetingSource = "https://zoom.org/opemEuler"
 )
 
 func StructToMap(obj interface{}) map[string]interface{} {
@@ -107,7 +107,7 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-
+		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
@@ -116,12 +116,12 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
-	lSourceGroup := strings.Split(sourceGroup, "/")
-	owner, repo := lSourceGroup[0], lSourceGroup[1]
-
+	result := event.Extensions()["relatedusers"].([]string)
+	logrus.Infof("the first result is %v", result)
 	if source == giteeSource {
+		lSourceGroup := strings.Split(sourceGroup, "/")
+		owner, repo := lSourceGroup[0], lSourceGroup[1]
 		giteeType := event.Type()
-		result := event.Extensions()["relatedusers"].([]string)
 		allAdmins, _ := utils.GetAllAdmins(owner, repo)
 		allContributors, _ := utils.GetAllContributors(owner, repo)
 		switch giteeType {
@@ -132,8 +132,11 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		case "issue":
 			result = append(result, allAdmins...)
 		}
-		event.SetExtension("relatedusers", result)
+	} else if source == meetingSource {
+		maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
+		result = append(result, maintainers...)
 	}
+	logrus.Infof("the result is %v", result)
 }
 
 /*
