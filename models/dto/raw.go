@@ -116,8 +116,11 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 
 	lSourceGroup := strings.Split(sourceGroup, "/")
 	owner, repo := lSourceGroup[0], lSourceGroup[1]
-	allCollaborators, _ := utils.GetAllCollaborators(owner, repo)
-	logrus.Infof("the repo data is %v", allCollaborators)
+	//allCollaborators, _ := utils.GetAllCollaborators(owner, repo)
+	//allWatchers, _ := utils.GetAllWatchers(owner, repo)
+	allContributors, _ := utils.GetAllContributors(owner, repo)
+
+	logrus.Infof("the contributors is %v", allContributors)
 }
 
 /*
