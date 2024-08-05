@@ -40,6 +40,7 @@ const (
 	collaboratorsUrl = "https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d"
 	watchersUrl      = "https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d"
 	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers"
+	getUserUrl       = "https://gitee.com/api/v5/users/%s?access_token=%s"
 )
 
 func GetAllAdmins(owner, repo string) ([]string, error) {
@@ -172,7 +173,35 @@ func GetAllContributors(owner, repo string) ([]string, error) {
 	allContributors = append(allContributors, members...)
 	var logins []string
 	for _, contributor := range allContributors {
-		logins = append(logins, contributor.Name)
+		loginName, _ := GetUserLoginName(contributor.Name)
+		logins = append(logins, loginName)
 	}
 	return logins, nil
+}
+
+func GetUserLoginName(name string) (string, error) {
+	url := fmt.Sprintf(getUserUrl, name, accessToken)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var user User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		return "", err
+	}
+
+	return user.Login, nil
 }
