@@ -3,6 +3,7 @@ package dto
 import (
 	"encoding/json"
 	"fmt"
+
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/models/do"
@@ -22,7 +23,7 @@ func NewCloudEvents() CloudEvents {
 
 func (event CloudEvents) Message() ([]byte, error) {
 	body, err := json.Marshal(event)
-	fmt.Println(body)
+	logrus.Info(body)
 	return body, err
 }
 
@@ -32,7 +33,7 @@ func (event CloudEvents) SaveDb() {
 		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
 		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title", "related_users"}),
 	}).Create(&eventDO)
-	fmt.Println(res)
+	logrus.Info(res)
 	logrus.Info("插入成功")
 }
 

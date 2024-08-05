@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"reflect"
+	"text/template"
+	"time"
+
 	flattener "github.com/anshal21/json-flattener"
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
-	"reflect"
-	"text/template"
-	"time"
+	"github.com/sirupsen/logrus"
 )
 
 type Raw map[string]interface{}
@@ -94,6 +96,8 @@ func (raw *Raw) Flatten() map[string]interface{} {
 func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
+	logrus.Infof("the raw data is %v", raw)
+	logrus.Infof("the flatten is %v", raw.Flatten())
 	if configs != nil {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
