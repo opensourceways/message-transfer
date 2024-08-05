@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"text/template"
 	"time"
 
@@ -115,7 +116,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	//source := event.Source()
 	//sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
-	logrus.Infof("the first result is %v", result)
+	logrus.Infof("the first result is %v", strings.Split(result, ","))
 	//if source == giteeSource {
 	//	lSourceGroup := strings.Split(sourceGroup, "/")
 	//	owner, repo := lSourceGroup[0], lSourceGroup[1]
