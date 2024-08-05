@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 	"text/template"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
+	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -101,12 +103,21 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 			raw.transferField(&newEvent, config)
 		}
 
-		logrus.Infof("the event source is %v", newEvent.Source())
-		logrus.Infof("the event sourgroup is %v", newEvent.Extensions()["sourcegroup"].(string))
+		raw.GetRelateUsers(&newEvent)
 
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
+}
+
+func (raw *Raw) GetRelateUsers(event *CloudEvents) {
+	//source := event.Source()
+	sourceGroup := event.Extensions()["sourcegroup"].(string)
+
+	lSourceGroup := strings.Split(sourceGroup, "/")
+	owner, repo := lSourceGroup[0], lSourceGroup[1]
+	allCollaborators, _ := utils.GetAllCollaborators(owner, repo)
+	logrus.Infof("the repo data is %v", allCollaborators)
 }
 
 /*
