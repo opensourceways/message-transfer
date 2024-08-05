@@ -118,9 +118,10 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	owner, repo := lSourceGroup[0], lSourceGroup[1]
 	//allCollaborators, _ := utils.GetAllCollaborators(owner, repo)
 	//allWatchers, _ := utils.GetAllWatchers(owner, repo)
-	allContributors, _ := utils.GetAllContributors(owner, repo)
-
-	logrus.Infof("the contributors is %v", allContributors)
+	_, err := utils.GetAllContributors(owner, repo)
+	if err != nil {
+		return
+	}
 }
 
 /*

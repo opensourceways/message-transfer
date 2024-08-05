@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Collaborator struct {
@@ -162,7 +164,10 @@ func GetAllContributors(owner, repo string) ([]Contributor, error) {
 
 	allContributors = append(allContributors, members...)
 	for i := range allContributors {
-		allContributors[i].Name, _ = GetContributorLoginName(allContributors[i])
+		allContributors[i].Name, err = GetContributorLoginName(allContributors[i])
+		if err != nil {
+			logrus.Errorf("the err is %v", err)
+		}
 	}
 	return allContributors, nil
 }
