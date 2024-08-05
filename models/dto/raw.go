@@ -133,10 +133,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 			result = append(result, allAdmins...)
 		}
 		event.SetExtension("relatedusers", result)
-	} else if source == eurSource {
-
 	}
-
 }
 
 /*
