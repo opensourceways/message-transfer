@@ -41,7 +41,7 @@ const (
 	accessToken      = "****"
 	collaboratorsUrl = "https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d"
 	watchersUrl      = "https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d"
-	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=authors"
+	contributorsUrl  = "https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers"
 	getUsersUrl      = "https://gitee.com/api/v5/users/%s"
 )
 
@@ -166,7 +166,7 @@ func GetAllContributors(owner, repo string) ([]Contributor, error) {
 	for i := range allContributors {
 		allContributors[i].Name, err = GetContributorLoginName(allContributors[i])
 		if err != nil {
-			logrus.Errorf("the err is %v", err)
+			logrus.Errorf("the name is %s, the err is %v", allContributors[i].Name, err)
 		}
 	}
 	return allContributors, nil
