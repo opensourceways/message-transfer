@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"strings"
 	"text/template"
 	"time"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
-	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -114,29 +112,28 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 }
 
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
-	source := event.Source()
-	sourceGroup := event.Extensions()["sourcegroup"].(string)
-	result := event.Extensions()["relatedusers"].([]string)
+	//source := event.Source()
+	//sourceGroup := event.Extensions()["sourcegroup"].(string)
+	result := event.Extensions()["relatedusers"].(string)
 	logrus.Infof("the first result is %v", result)
-	if source == giteeSource {
-		lSourceGroup := strings.Split(sourceGroup, "/")
-		owner, repo := lSourceGroup[0], lSourceGroup[1]
-		giteeType := event.Type()
-		allAdmins, _ := utils.GetAllAdmins(owner, repo)
-		allContributors, _ := utils.GetAllContributors(owner, repo)
-		switch giteeType {
-		case "pr":
-			result = append(append(result, allAdmins...), allContributors...)
-		case "push":
-			result = append(result, allAdmins...)
-		case "issue":
-			result = append(result, allAdmins...)
-		}
-	} else if source == meetingSource {
-		maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
-		result = append(result, maintainers...)
-	}
-	logrus.Infof("the result is %v", result)
+	//if source == giteeSource {
+	//	lSourceGroup := strings.Split(sourceGroup, "/")
+	//	owner, repo := lSourceGroup[0], lSourceGroup[1]
+	//	giteeType := event.Type()
+	//	allAdmins, _ := utils.GetAllAdmins(owner, repo)
+	//	allContributors, _ := utils.GetAllContributors(owner, repo)
+	//	switch giteeType {
+	//	case "pr":
+	//		result = append(append(result, allAdmins...), allContributors...)
+	//	case "push":
+	//		result = append(result, allAdmins...)
+	//	case "issue":
+	//		result = append(result, allAdmins...)
+	//	}
+	//} else if source == meetingSource {
+	//	maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
+	//	result = append(result, maintainers...)
+	//}
 }
 
 /*
