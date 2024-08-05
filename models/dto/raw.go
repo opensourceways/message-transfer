@@ -13,6 +13,7 @@ import (
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
+	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -113,28 +114,31 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 }
 
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
-	//source := event.Source()
-	//sourceGroup := event.Extensions()["sourcegroup"].(string)
+	source := event.Source()
+	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
-	logrus.Infof("the first result is %v", strings.Split(result, ","))
-	//if source == giteeSource {
-	//	lSourceGroup := strings.Split(sourceGroup, "/")
-	//	owner, repo := lSourceGroup[0], lSourceGroup[1]
-	//	giteeType := event.Type()
-	//	allAdmins, _ := utils.GetAllAdmins(owner, repo)
-	//	allContributors, _ := utils.GetAllContributors(owner, repo)
-	//	switch giteeType {
-	//	case "pr":
-	//		result = append(append(result, allAdmins...), allContributors...)
-	//	case "push":
-	//		result = append(result, allAdmins...)
-	//	case "issue":
-	//		result = append(result, allAdmins...)
-	//	}
-	//} else if source == meetingSource {
-	//	maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
-	//	result = append(result, maintainers...)
-	//}
+	lResult := strings.Split(result, ",")
+	logrus.Infof("the first result is %v", result)
+	if source == giteeSource {
+		lSourceGroup := strings.Split(sourceGroup, "/")
+		owner, repo := lSourceGroup[0], lSourceGroup[1]
+		giteeType := event.Type()
+		allAdmins, _ := utils.GetAllAdmins(owner, repo)
+		allContributors, _ := utils.GetAllContributors(owner, repo)
+		switch giteeType {
+		case "pr":
+			lResult = append(append(lResult, allAdmins...), allContributors...)
+		case "push":
+			lResult = append(lResult, allAdmins...)
+		case "issue":
+			lResult = append(lResult, allAdmins...)
+		}
+	} else if source == meetingSource {
+		maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
+		lResult = append(lResult, maintainers...)
+	}
+	result = strings.Join(lResult, ",")
+	logrus.Infof("the result is %v", result)
 }
 
 /*
