@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/config"
@@ -10,7 +12,6 @@ import (
 	"github.com/opensourceways/message-transfer/utils"
 	"github.com/opensourceways/server-common-lib/logrusutil"
 	"github.com/sirupsen/logrus"
-	"os"
 )
 
 func main() {
@@ -97,5 +98,5 @@ func (o *Options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.Config, "config-file", "", "Path to config file.")
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
 	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
-	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "", "Path to gitee config file.")
+	//fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "", "Path to gitee config file.")
 }
