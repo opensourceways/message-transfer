@@ -73,7 +73,7 @@ func initConfig() *config.Config {
 func initTransferConfig(o Options) {
 	config.InitGiteeConfig(o.GiteeConfig)
 	config.InitEurBuildConfig(o.EurBuildConfig)
-	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
+	//config.InitMeetingConfig(o.OpenEulerMeetingConfig)
 }
 
 /*
