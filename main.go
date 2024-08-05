@@ -31,6 +31,11 @@ func main() {
 		return
 	}
 
+	if err := utils.Init(&cfg.Utils); err != nil {
+		logrus.Errorf("init utils failed, err:%s", err.Error())
+		return
+	}
+
 	go func() {
 		service.SubscribeEurRaw()
 	}()
