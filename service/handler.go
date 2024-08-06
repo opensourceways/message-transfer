@@ -16,11 +16,11 @@ func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	if event.ID() == "" {
 		return nil
 	}
+	event.SaveDb()
 	kafkaSendErr := kafka.SendMsg(cfg.Publish, &event)
 	if kafkaSendErr != nil {
 		return kafkaSendErr
 	}
-	event.SaveDb()
 	return nil
 }
 
