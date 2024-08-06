@@ -31,14 +31,6 @@ type Permission struct {
 	Admin bool `json:"admin"`
 }
 
-type SigInfo struct {
-	Data SigData `json:"data"`
-}
-
-type SigData struct {
-	Maintainers []string `json:"maintainers"`
-}
-
 func (p *Permission) IsAdmin() bool {
 	return p.Admin
 }
@@ -177,31 +169,4 @@ func GetAllContributors(owner, repo string) ([]string, error) {
 		logins = append(logins, contributor.Name)
 	}
 	return logins, nil
-}
-
-func GetMaintainersBySig(sig string) ([]string, error) {
-	url := fmt.Sprintf(config.QuerySigInfo, sig)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var sigInfo SigInfo
-	err = json.Unmarshal(body, &sigInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return sigInfo.Data.Maintainers, nil
 }

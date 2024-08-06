@@ -134,8 +134,9 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 			lResult = append(lResult, allAdmins...)
 		}
 	} else if source == meetingSource {
-		maintainers, _ := utils.GetMaintainersBySig(sourceGroup)
+		maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
 		lResult = append(lResult, maintainers...)
+		lResult = append(lResult, committers...)
 	}
 	result = strings.Join(lResult, ",")
 	logrus.Infof("the result is %v", result)
