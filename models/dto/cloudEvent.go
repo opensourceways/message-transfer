@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/sirupsen/logrus"
+	"golang.org/x/xerrors"
+	"gorm.io/gorm/clause"
+
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/models/do"
-	"github.com/sirupsen/logrus"
-	"gorm.io/gorm/clause"
 )
 
 type CloudEvents struct {
@@ -25,13 +27,17 @@ func (event CloudEvents) Message() ([]byte, error) {
 	return body, err
 }
 
-func (event CloudEvents) SaveDb() {
+func (event CloudEvents) SaveDb() error {
 	eventDO := event.toCloudEventDO()
-	postgresql.DB().Clauses(clause.OnConflict{
+	result := postgresql.DB().Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "event_id"}, {Name: "source"}},
 		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group", "summary", "data_schema", "data_content_type", "spec_version", "time", "user", "data_json", "title", "related_users"}),
 	}).Create(&eventDO)
+	if result.Error != nil {
+		return xerrors.Errorf("save DB failed, the err: %v", result.Error)
+	}
 	logrus.Info("插入成功")
+	return nil
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
