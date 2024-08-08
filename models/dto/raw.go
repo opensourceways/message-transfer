@@ -124,10 +124,9 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		owner, repo := lSourceGroup[0], lSourceGroup[1]
 		giteeType := event.Type()
 		allAdmins, _ := utils.GetAllAdmins(owner, repo)
-		allContributors, _ := utils.GetAllContributors(owner, repo)
 		switch giteeType {
 		case "pr":
-			lResult = append(append(lResult, allAdmins...), allContributors...)
+			lResult = append(lResult, allAdmins...)
 		case "push":
 			lResult = append(lResult, allAdmins...)
 		case "issue":
