@@ -138,8 +138,18 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		lResult = append(lResult, maintainers...)
 		lResult = append(lResult, committers...)
 	}
+
+	seen := make(map[string]bool)
+	filterResult := make([]string, 0, len(result))
+	for _, str := range lResult {
+		if !seen[str] {
+			seen[str] = true
+			filterResult = append(filterResult, str)
+		}
+	}
 	result = strings.Join(lResult, ",")
 	logrus.Infof("the result is %v", result)
+	event.SetExtension("relatedusers", result)
 }
 
 /*
