@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/models/dto"
@@ -16,7 +18,11 @@ func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	if event.ID() == "" {
 		return nil
 	}
-	event.SaveDb()
+	err := event.SaveDb()
+	if err != nil {
+		logrus.Errorf("saveDb failed, err:%v", err)
+		return err
+	}
 	kafkaSendErr := kafka.SendMsg(cfg.Publish, &event)
 	if kafkaSendErr != nil {
 		return kafkaSendErr
