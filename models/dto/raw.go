@@ -142,8 +142,13 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
-	logrus.Infof("the resultlist is %v, type is %v", resultList, reflect.TypeOf(resultList))
-	event.SetExtension("relatedusers", resultList)
+	var stringList []string
+	for _, item := range resultList {
+		if str, ok := item.(string); ok {
+			stringList = append(stringList, str)
+		}
+	}
+	event.SetExtension("relatedusers", stringList)
 }
 
 /*
