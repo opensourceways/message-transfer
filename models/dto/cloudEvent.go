@@ -2,7 +2,6 @@ package dto
 
 import (
 	"encoding/json"
-	"strings"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/sirupsen/logrus"
@@ -42,11 +41,6 @@ func (event CloudEvents) SaveDb() error {
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
-	var relatedUsers []string
-	if event.Extensions()["relatedusers"] != nil {
-		logrus.Info(event.Extensions()["relatedusers"])
-		relatedUsers = event.Extensions()["relatedusers"].([]string)
-	}
 
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
@@ -62,7 +56,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		Title:           event.Extensions()["title"].(string),
 		Summary:         event.Extensions()["summary"].(string),
 		SourceGroup:     event.Extensions()["sourcegroup"].(string),
-		RelatedUsers:    "{" + strings.Join(relatedUsers, ",") + "}",
+		RelatedUsers:    "{" + event.Extensions()["relatedusers"].(string) + "}",
 	}
 	return messageCloudEventDO
 }
