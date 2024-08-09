@@ -148,11 +148,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 			stringList = append(stringList, str)
 		}
 	}
-	interfaceList := make([]interface{}, len(stringList))
-	for i, v := range stringList {
-		interfaceList[i] = v
-	}
-	event.SetExtension("relatedusers", interfaceList)
+	event.SetExtension("relatedusers", stringList)
 }
 
 /*
