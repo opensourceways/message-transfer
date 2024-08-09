@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -76,7 +77,15 @@ func EurBuildHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-	rawMap := dto.StructToMap(raw)
+
+	newRaw := dto.EurBuildMessageRawWithSourceGroup{
+		Body:        raw.Body,
+		Headers:     raw.Headers,
+		ID:          raw.ID,
+		Topic:       raw.Topic,
+		SourceGroup: fmt.Sprintf("%s/%s", raw.Body.Owner, raw.Body.Copr),
+	}
+	rawMap := dto.StructToMap(newRaw)
 	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
 }
 

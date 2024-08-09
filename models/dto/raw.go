@@ -15,6 +15,7 @@ import (
 	"github.com/opensourceways/message-transfer/models/bo"
 	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
+	"github.com/todocoder/go-stream/stream"
 )
 
 type Raw map[string]interface{}
@@ -138,17 +139,11 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		lResult = append(lResult, committers...)
 	}
 
-	seen := make(map[string]bool)
-	filterResult := make([]string, 0, len(result))
-	for _, str := range lResult {
-		if !seen[str] {
-			seen[str] = true
-			filterResult = append(filterResult, str)
-		}
-	}
-	result = strings.Join(lResult, ",")
-	logrus.Infof("the result is %v", result)
-	event.SetExtension("relatedusers", result)
+	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
+		Map(func(item string) any {
+			return strings.ReplaceAll(item, ",", `\,`)
+		}).ToSlice()
+	event.SetExtension("relatedusers", resultList)
 }
 
 /*
@@ -159,7 +154,11 @@ user,sourceurl,title,summary是扩展字段
 func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	logrus.Infof("the tmpl is %v", tmpl)
-	t := template.Must(template.New("example").Parse(tmpl))
+	t := template.Must(template.New("example").Funcs(template.FuncMap{
+		"escape": func(s string) string {
+			return strings.ReplaceAll(s, ",", `\,`)
+		},
+	}).Parse(tmpl))
 	var resultBuffer bytes.Buffer
 	t.Execute(&resultBuffer, raw)
 	result := resultBuffer.String()
