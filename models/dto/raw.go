@@ -119,7 +119,6 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
 	lResult := strings.Split(result, ",")
-	logrus.Infof("the first result is %v", result)
 	if source == giteeSource {
 		lSourceGroup := strings.Split(sourceGroup, "/")
 		owner, repo := lSourceGroup[0], lSourceGroup[1]
@@ -143,6 +142,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
+	logrus.Infof("the resultlist is %v, type is %v", resultList, reflect.TypeOf(resultList))
 	event.SetExtension("relatedusers", resultList)
 }
 
