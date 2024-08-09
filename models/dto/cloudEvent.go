@@ -44,6 +44,7 @@ func (event CloudEvents) SaveDb() error {
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	var relatedUsers []string
 	if event.Extensions()["relatedusers"] != nil {
+		logrus.Info(event.Extensions()["relatedusers"])
 		relatedUsers = event.Extensions()["relatedusers"].([]string)
 	}
 
