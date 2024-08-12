@@ -111,7 +111,7 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
-	logrus.Infof("the relatedusers is %v", event.Extensions()["relatedusers"].(string))
+	logrus.Infof("the relatedusers is %v", newEvent.Extensions()["relatedusers"].(string))
 	return newEvent
 }
 
