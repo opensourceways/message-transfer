@@ -137,11 +137,13 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		lResult = append(lResult, maintainers...)
 		lResult = append(lResult, committers...)
 	}
-
+	logrus.Infof("the relatedusers is %v", lResult)
 	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
+
+	logrus.Infof("the distinct relatedusers is %v", resultList)
 	var stringList []string
 	for _, item := range resultList {
 		if str, ok := item.(string); ok {
