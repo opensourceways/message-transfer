@@ -14,7 +14,6 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/sirupsen/logrus"
 	"github.com/todocoder/go-stream/stream"
 )
 
@@ -108,14 +107,14 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-		raw.GetRelateUsers(&newEvent)
+		relatedUsers := raw.GetRelateUsers(&newEvent)
+		newEvent.SetExtension("relatedusers", relatedUsers)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
-	logrus.Infof("the relatedusers is %v", newEvent.Extensions()["relatedusers"].(string))
 	return newEvent
 }
 
-func (raw *Raw) GetRelateUsers(event *CloudEvents) {
+func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
@@ -142,8 +141,13 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
-
-	event.SetExtension("relatedusers", resultList)
+	var stringList []string
+	for _, item := range resultList {
+		if str, ok := item.(string); ok {
+			stringList = append(stringList, str)
+		}
+	}
+	return stringList
 }
 
 /*
