@@ -111,6 +111,7 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
+	logrus.Infof("the relatedusers is %v", event.Extensions()["relatedusers"].(string))
 	return newEvent
 }
 
@@ -142,7 +143,6 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
 
-	logrus.Infof("the distinct relatedusers is %v", resultList)
 	event.SetExtension("relatedusers", resultList)
 }
 
