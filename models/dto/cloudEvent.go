@@ -41,7 +41,7 @@ func (event CloudEvents) SaveDb() error {
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
-
+	logrus.Infof("the DB relatedusers is %v", event.Extensions()["relatedusers"].(string))
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
