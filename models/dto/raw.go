@@ -143,13 +143,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		}).ToSlice()
 
 	logrus.Infof("the distinct relatedusers is %v", resultList)
-	var stringList []string
-	for _, item := range resultList {
-		if str, ok := item.(string); ok {
-			stringList = append(stringList, str)
-		}
-	}
-	event.SetExtension("relatedusers", stringList)
+	event.SetExtension("relatedusers", resultList)
 }
 
 /*
