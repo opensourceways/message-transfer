@@ -108,14 +108,13 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-		relatedUsers := raw.GetRelateUsers(&newEvent)
-		newEvent.SetExtension("relatedusers", relatedUsers)
+		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
 }
 
-func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
+func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
@@ -146,18 +145,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
 		}).ToSlice()
-	var stringList []string
-	for _, item := range resultList {
-		if str, ok := item.(string); ok {
-			if str != "" {
-				stringList = append(stringList, str)
-			}
-		}
-	}
-	if sourceGroup == "openeuler/infrastructure" {
-		logrus.Errorf("the result is %v", stringList)
-	}
-	return stringList
+	event.SetExtension("relatedusers", resultList)
 }
 
 /*
