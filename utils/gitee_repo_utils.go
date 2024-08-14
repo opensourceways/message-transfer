@@ -53,7 +53,6 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		resp.Body.Close()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
