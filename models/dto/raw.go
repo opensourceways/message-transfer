@@ -143,7 +143,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	}
 	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
 		Map(func(item string) any {
-			return strings.ReplaceAll(item, ",", `\,`)
+			return strings.ReplaceAll(item, ",", `\\,`)
 		}).ToSlice()
 	event.SetExtension("relatedusers", resultList)
 }
