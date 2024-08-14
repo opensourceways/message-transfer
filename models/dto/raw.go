@@ -142,7 +142,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 		lResult = append(lResult, maintainers...)
 		lResult = append(lResult, committers...)
 	}
-	logrus.Errorf("the result is %v", lResult)
+	logrus.Errorf("the repo is %s, the result is %v", sourceGroup, lResult)
 	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
 		Map(func(item string) any {
 			return strings.ReplaceAll(item, ",", `\,`)
