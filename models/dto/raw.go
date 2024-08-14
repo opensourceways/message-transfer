@@ -15,7 +15,6 @@ import (
 	"github.com/opensourceways/message-transfer/models/bo"
 	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
-	"github.com/todocoder/go-stream/stream"
 )
 
 type Raw map[string]interface{}
@@ -108,14 +107,13 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-		relatedUsers := raw.GetRelateUsers(&newEvent)
-		newEvent.SetExtension("relatedusers", relatedUsers)
+		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
 }
 
-func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
+func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
@@ -142,19 +140,14 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 		lResult = append(lResult, maintainers...)
 		lResult = append(lResult, committers...)
 	}
-	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
-		Map(func(item string) any {
-			return item
-		}).ToSlice()
 	var stringList []string
-	for _, item := range resultList {
-		if str, ok := item.(string); ok {
-			if str != "" {
-				stringList = append(stringList, strings.ReplaceAll(str, ",", "\\,"))
-			}
+	for _, str := range lResult {
+		if str != "" {
+			stringList = append(stringList, strings.ReplaceAll(str, ",", "\\,"))
 		}
+
 	}
-	return stringList
+	event.SetExtension("relatedusers", stringList)
 }
 
 /*
