@@ -143,7 +143,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	var stringList []string
 	for _, str := range lResult {
 		if str != "" {
-			stringList = append(stringList, strings.ReplaceAll(str, ",", "\\,"))
+			stringList = append(stringList, strings.ReplaceAll(str, ",", "\\\\,"))
 		}
 
 	}
