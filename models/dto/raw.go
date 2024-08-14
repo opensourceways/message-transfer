@@ -149,7 +149,9 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 	var stringList []string
 	for _, item := range resultList {
 		if str, ok := item.(string); ok {
-			stringList = append(stringList, str)
+			if str != "" {
+				stringList = append(stringList, str)
+			}
 		}
 	}
 	if sourceGroup == "openeuler/infrastructure" {
