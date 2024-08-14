@@ -14,6 +14,7 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/opensourceways/message-transfer/models/bo"
 	"github.com/opensourceways/message-transfer/utils"
+	"github.com/sirupsen/logrus"
 	"github.com/todocoder/go-stream/stream"
 )
 
@@ -123,7 +124,10 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 		lSourceGroup := strings.Split(sourceGroup, "/")
 		owner, repo := lSourceGroup[0], lSourceGroup[1]
 		giteeType := event.Type()
-		allAdmins, _ := utils.GetAllAdmins(owner, repo)
+		allAdmins, err := utils.GetAllAdmins(owner, repo)
+		if err != nil {
+			logrus.Errorf("get admins failed, err:%v", err)
+		}
 
 		switch giteeType {
 		case "pr":

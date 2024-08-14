@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-
-	"github.com/sirupsen/logrus"
 )
 
 type Collaborator struct {
@@ -73,7 +71,6 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		if totalCount == 0 {
 			totalCount, _ = strconv.Atoi(resp.Header.Get("total_count"))
 		}
-		logrus.Errorf("the members is %v, len is %d", members, len(members))
 		if len(members) < perPage {
 			break
 		}
@@ -81,15 +78,12 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		resp.Body.Close()
 	}
 
-	logrus.Errorf("[11111111]  the %s/%s admins is %v", owner, repo, allCollaborators)
-
 	var logins []string
 	for _, collaborator := range allCollaborators {
 		if collaborator.Permissions.IsAdmin() {
 			logins = append(logins, collaborator.Login)
 		}
 	}
-	logrus.Errorf("[22222222]  the %s/%s admins is %v", owner, repo, allCollaborators)
 	return logins, nil
 }
 
