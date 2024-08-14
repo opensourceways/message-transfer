@@ -73,7 +73,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		if totalCount == 0 {
 			totalCount, _ = strconv.Atoi(resp.Header.Get("total_count"))
 		}
-
+		logrus.Errorf("the members is %v, len is %d", members, len(members))
 		if len(members) < perPage {
 			break
 		}
@@ -81,7 +81,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		resp.Body.Close()
 	}
 
-	logrus.Infof("[11111111]  the %s/%s admins is %v", owner, repo, allCollaborators)
+	logrus.Errorf("[11111111]  the %s/%s admins is %v", owner, repo, allCollaborators)
 
 	var logins []string
 	for _, collaborator := range allCollaborators {
@@ -89,7 +89,7 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 			logins = append(logins, collaborator.Login)
 		}
 	}
-	logrus.Infof("[22222222]  the %s/%s admins is %v", owner, repo, allCollaborators)
+	logrus.Errorf("[22222222]  the %s/%s admins is %v", owner, repo, allCollaborators)
 	return logins, nil
 }
 
