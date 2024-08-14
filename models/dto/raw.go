@@ -108,13 +108,14 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-		raw.GetRelateUsers(&newEvent)
+		relatedUsers := raw.GetRelateUsers(&newEvent)
+		newEvent.SetExtension("relatedusers", relatedUsers)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
 }
 
-func (raw *Raw) GetRelateUsers(event *CloudEvents) {
+func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 	source := event.Source()
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
@@ -143,9 +144,17 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	}
 	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).
 		Map(func(item string) any {
-			return strings.ReplaceAll(item, ",", `\\,`)
+			return item
 		}).ToSlice()
-	event.SetExtension("relatedusers", resultList)
+	var stringList []string
+	for _, item := range resultList {
+		if str, ok := item.(string); ok {
+			if str != "" {
+				stringList = append(stringList, strings.ReplaceAll(str, ",", "\\,"))
+			}
+		}
+	}
+	return stringList
 }
 
 /*
