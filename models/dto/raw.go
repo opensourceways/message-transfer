@@ -125,7 +125,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) []string {
 		owner, repo := lSourceGroup[0], lSourceGroup[1]
 		giteeType := event.Type()
 		allAdmins, _ := utils.GetAllAdmins(owner, repo)
-		logrus.Infof("the admins is %v", allAdmins)
+		logrus.Infof("the %s/%s admins is %v", owner, repo, allAdmins)
 
 		switch giteeType {
 		case "pr":
