@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Collaborator struct {
@@ -79,12 +81,15 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		resp.Body.Close()
 	}
 
+	logrus.Infof("[11111111]  the %s/%s admins is %v", owner, repo, allCollaborators)
+
 	var logins []string
 	for _, collaborator := range allCollaborators {
 		if collaborator.Permissions.IsAdmin() {
 			logins = append(logins, collaborator.Login)
 		}
 	}
+	logrus.Infof("[22222222]  the %s/%s admins is %v", owner, repo, allCollaborators)
 	return logins, nil
 }
 
