@@ -77,13 +77,13 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		resp.Body.Close()
 	}
 
-	var logins []string
+	var admins []string
 	for _, collaborator := range allCollaborators {
 		if collaborator.Permissions.IsAdmin() {
-			logins = append(logins, collaborator.Login)
+			admins = append(admins, collaborator.Login, collaborator.Name)
 		}
 	}
-	return logins, nil
+	return admins, nil
 }
 
 func GetAllWatchers(owner, repo string) ([]string, error) {
