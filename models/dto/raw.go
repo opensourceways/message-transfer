@@ -12,9 +12,11 @@ import (
 	flattener "github.com/anshal21/json-flattener"
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/sirupsen/logrus"
+	"github.com/todocoder/go-stream/stream"
+
 	"github.com/opensourceways/message-transfer/models/bo"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/sirupsen/logrus"
 )
 
 type Raw map[string]interface{}
@@ -140,14 +142,27 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		lResult = append(lResult, maintainers...)
 		lResult = append(lResult, committers...)
 	}
+	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).ToSlice()
 	var stringList []string
-	for _, str := range lResult {
+	for _, str := range resultList {
 		if str != "" {
-			stringList = append(stringList, strings.ReplaceAll(str, ",", "\\\\,"))
+			stringList = append(stringList, str)
 		}
 
 	}
-	event.SetExtension("relatedusers", stringList)
+	event.SetExtension("relatedusers", strings.Join(escapeCommas(stringList), ","))
+}
+
+func escapeCommas(s []string) []string {
+	var result []string
+	for _, item := range s {
+		if strings.HasPrefix(item, ",") {
+			result = append(result, `\\`+item)
+		} else {
+			result = append(result, item)
+		}
+	}
+	return result
 }
 
 /*
