@@ -174,7 +174,7 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	t := template.Must(template.New("example").Funcs(template.FuncMap{
 		"escape": func(s string) string {
-			return strings.ReplaceAll(s, ",", `\,`)
+			return strings.ReplaceAll(s, ",", `\\,`)
 		},
 	}).Parse(tmpl))
 	var resultBuffer bytes.Buffer
