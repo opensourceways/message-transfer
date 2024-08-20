@@ -16,5 +16,6 @@ type OpenEulerMeetingRaw struct {
 		EmailList string      `json:"emaillist"`
 		Record    string      `json:"record"`
 		JoinUrl   string      `json:"join_url"`
+		ID        int         `json:"id"`
 	} `json:"msg"`
 }
