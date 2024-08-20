@@ -37,6 +37,11 @@ func GiteeIssueHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
+	if err != nil {
+		return err
+	}
+	raw.SigGroupName = sigGroupName
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Issue)
 }
@@ -47,6 +52,11 @@ func GiteePushHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
+	if err != nil {
+		return err
+	}
+	raw.SigGroupName = sigGroupName
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Push)
 }
@@ -57,6 +67,11 @@ func GiteePrHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
+	if err != nil {
+		return err
+	}
+	raw.SigGroupName = sigGroupName
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.PR)
 }
@@ -67,6 +82,11 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
+	if err != nil {
+		return err
+	}
+	raw.SigGroupName = sigGroupName
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Note)
 }
