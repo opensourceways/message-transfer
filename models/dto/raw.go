@@ -23,7 +23,7 @@ type Raw map[string]interface{}
 
 const (
 	giteeSource   = "https://gitee.com"
-	meetingSource = "https://zoom.org/opemEuler"
+	meetingSource = "https://www.openEuler.org/meeting"
 )
 
 func StructToMap(obj interface{}) map[string]interface{} {
