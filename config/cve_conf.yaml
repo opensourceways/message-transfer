@@ -1,0 +1,4 @@
+kafka:
+  topic: cve_issue_raw
+  publish : cve_issue_event
+  group: message-transfer

@@ -1,4 +1,4 @@
 kafka:
   topic: openEuler_meeting_raw
   publish : openEuler_meeting_Event
-  group: message-transfer
+  group: message-transfer-local
