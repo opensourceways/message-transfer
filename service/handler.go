@@ -31,6 +31,18 @@ func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	return nil
 }
 
+func CVEHandle(payload []byte, _ map[string]string) error {
+	var raw dto.CVERaw
+
+	msgBodyErr := json.Unmarshal(payload, &raw)
+	if msgBodyErr != nil {
+		return msgBodyErr
+	}
+	rawMap := dto.StructToMap(raw)
+	logrus.Info(rawMap)
+	return nil
+}
+
 func GiteeIssueHandle(payload []byte, _ map[string]string) error {
 	var raw dto.GiteeIssueRaw
 	msgBodyErr := json.Unmarshal(payload, &raw)

@@ -36,23 +36,26 @@ func main() {
 		return
 	}
 
+	//go func() {
+	//	service.SubscribeEurRaw()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeIssue()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteePush()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteePr()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeNote()
+	//}()
+	//go func() {
+	//	service.SubscribeOpenEulerMeeting()
+	//}()
 	go func() {
-		service.SubscribeEurRaw()
-	}()
-	go func() {
-		service.SubscribeGiteeIssue()
-	}()
-	go func() {
-		service.SubscribeGiteePush()
-	}()
-	go func() {
-		service.SubscribeGiteePr()
-	}()
-	go func() {
-		service.SubscribeGiteeNote()
-	}()
-	go func() {
-		service.SubscribeOpenEulerMeeting()
+		service.SubscribeCVERaw()
 	}()
 
 	select {}
@@ -79,6 +82,7 @@ func initTransferConfig(o Options) {
 	config.InitGiteeConfig(o.GiteeConfig)
 	config.InitEurBuildConfig(o.EurBuildConfig)
 	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
+	config.InitCVEConfig(o.CVEConfig)
 }
 
 /*
@@ -97,6 +101,7 @@ type Options struct {
 	EurBuildConfig         string
 	GiteeConfig            string
 	OpenEulerMeetingConfig string
+	CVEConfig              string
 }
 
 func (o *Options) AddFlags(fs *flag.FlagSet) {
@@ -104,4 +109,6 @@ func (o *Options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
 	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
 	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "", "Path to gitee config file.")
+	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to gitee config file.")
+
 }
