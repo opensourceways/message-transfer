@@ -1,5 +1,5 @@
 kafka:
-  address: 182.160.6.195:9094,159.138.150.4:9094,49.0.229.191:9094
+  address:
   version: 2.3.0
   mq_cert:
   user_name: kafka-test
@@ -8,32 +8,11 @@ kafka:
   skip_cert_verify: true
 
 postgresql:
-  host: 49.0.247.41
-  user: message_center
+  host:
+  user:
   port: 30051
-  pwd: 6jxetzzm5Xa!hFsx
-  database: message_center
+  pwd:
+  database: test_message_center
   life: 1000
   max_conn: 500
   max_idle: 250
-
-
-utils:
-  consume_sleep_time: 1
-  gitee_access_token: ****
-  gitee_collaborator_url: https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d
-  gitee_watcher_url: https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d
-  gitee_contributor_url: https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers
-  euler_repo_sig_url: https://dsapi.osinfra.cn/query/repo/sig?community=openeuler&repo=%s
-  euler_user_sig_url: https://dsapi.osinfra.cn/query/user/ownertype?community=openeuler&user=%s
-  query_sig_info: https://dsapi.osinfra.cn/query/sig/info?community=openeuler&sig=%s
-
-utils:
-  consume_sleep_time: 1
-  gitee_access_token: ****
-  gitee_collaborator_url: https://gitee.com/api/v5/repos/%s/%s/collaborators?access_token=%s&page=%d&per_page=%d
-  gitee_watcher_url: https://gitee.com/api/v5/repos/%s/%s/subscribers?access_token=%s&page=%d&per_page=%d
-  gitee_contributor_url: https://gitee.com/api/v5/repos/%s/%s/contributors?access_token=%s&type=committers
-  euler_repo_sig_url: https://dsapi.osinfra.cn/query/repo/sig?community=openeuler&repo=%s
-  euler_user_sig_url: https://dsapi.osinfra.cn/query/user/ownertype?community=openeuler&user=%s
-  query_sig_info: https://dsapi.osinfra.cn/query/sig/info?community=openeuler&sig=%s
