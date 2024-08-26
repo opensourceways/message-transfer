@@ -5,8 +5,17 @@ import (
 	"regexp"
 )
 
-type CVERaw struct {
+type CVEIssueRaw struct {
 	gitee.IssueEvent
+}
+
+func (cveIssueRaw *CVEIssueRaw) ToMap() map[string]interface{} {
+	cveMap := extractVariables(*cveIssueRaw.Description)
+	cveIssueMap, _ := ToMap(cveIssueRaw)
+	for s, i := range cveMap {
+		cveIssueMap[s] = i
+	}
+	return cveIssueMap
 }
 
 func extractVariables(text string) map[string]interface{} {
@@ -14,17 +23,17 @@ func extractVariables(text string) map[string]interface{} {
 
 	// 定义正则表达式来匹配每个变量
 	patterns := map[string]string{
-		"漏洞编号":        `漏洞编号：(.*?)\n`,
-		"漏洞归属组件":      `漏洞归属组件：(.*?)\n`,
-		"漏洞归属的版本":     `漏洞归属的版本：((?s).*?)\n`,
-		"BaseScore":   `BaseScore：(.*?)\n`,
-		"Vector":      `Vector：(.*?)\n`,
-		"漏洞简述":        `漏洞简述：(.*?)漏洞公开时间`,
-		"漏洞公开时间":      `漏洞公开时间：(.*?)\n`,
-		"漏洞创建时间":      `漏洞创建时间：(.*?)\n`,
-		"漏洞详情参考链接":    `漏洞详情参考链接：(.*?)\n`,
-		"受影响版本排查":     `受影响版本排查\(受影响/不受影响\)：((?s).*?)\n\n`,
-		"修复是否涉及abi变化": `修复是否涉及abi变化\(是/否\)：((?s).*?)\n\n`,
+		"CVENumber":        `漏洞编号：(.*?)\n`,
+		"CVEComponent":     `漏洞归属组件：(.*?)\n`,
+		"CVRVersion":       `漏洞归属的版本：((?s).*?)\n`,
+		"CVEBaseScore":     `BaseScore：(.*?)\n`,
+		"CVEVector":        `Vector：(.*?)\n`,
+		"CVEDesc":          `漏洞简述：(.*?)漏洞公开时间`,
+		"CVEReleaseDate":   `漏洞公开时间：(.*?)\n`,
+		"CVECreatedDate":   `漏洞创建时间：(.*?)\n`,
+		"CVEDetailURL":     `漏洞详情参考链接：(.*?)\n`,
+		"CVEAffectVersion": `受影响版本排查\(受影响/不受影响\)：((?s).*?)\n\n`,
+		"CVEApiChange":     `修复是否涉及abi变化\(是/否\)：((?s).*?)\n\n`,
 	}
 
 	// 依次匹配并提取每个变量
