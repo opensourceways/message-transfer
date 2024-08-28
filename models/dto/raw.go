@@ -24,6 +24,7 @@ type Raw map[string]interface{}
 const (
 	giteeSource   = "https://gitee.com"
 	meetingSource = "https://www.openEuler.org/meeting"
+	cveSource     = "cve"
 )
 
 func StructToMap(obj interface{}) map[string]interface{} {
@@ -120,7 +121,7 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	sourceGroup := event.Extensions()["sourcegroup"].(string)
 	result := event.Extensions()["relatedusers"].(string)
 	lResult := strings.Split(result, ",")
-	if source == giteeSource {
+	if source == giteeSource || source == cveSource {
 		lSourceGroup := strings.Split(sourceGroup, "/")
 		owner, repo := lSourceGroup[0], lSourceGroup[1]
 		giteeType := event.Type()
