@@ -12,7 +12,7 @@ type RepoSig struct {
 }
 
 type SigInfo struct {
-	Data SigData `json:"data"`
+	Data []SigData `json:"data"`
 }
 
 type SigData struct {
@@ -98,5 +98,5 @@ func GetMembersBySig(sig string) ([]string, []string, error) {
 		return nil, nil, err
 	}
 
-	return sigInfo.Data.Maintainers, sigInfo.Data.Committers, nil
+	return sigInfo.Data[0].Maintainers, sigInfo.Data[0].Committers, nil
 }
