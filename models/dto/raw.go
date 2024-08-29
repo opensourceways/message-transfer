@@ -3,7 +3,6 @@ package dto
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 	"text/template"
@@ -67,28 +66,6 @@ func StructToMap(obj interface{}) map[string]interface{} {
 		}
 	}
 	return result
-}
-
-func ToMap(in interface{}) (Raw, error) {
-	out := make(map[string]interface{})
-	v := reflect.ValueOf(in)
-
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-
-	if v.Kind() != reflect.Struct {
-		return nil, fmt.Errorf("ToMap only accepts struct or struct pointer; got %T", v)
-	}
-
-	t := v.Type()
-
-	for i := 0; i < v.NumField(); i++ {
-		fi := t.Field(i)
-		out[fi.Name] = v.Field(i).Interface()
-	}
-
-	return out, nil
 }
 
 func (raw *Raw) Flatten() map[string]interface{} {

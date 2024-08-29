@@ -11,7 +11,7 @@ type CVEIssueRaw struct {
 
 func (cveIssueRaw *CVEIssueRaw) ToMap() map[string]interface{} {
 	cveMap := extractVariables(*cveIssueRaw.Description)
-	cveIssueMap, _ := ToMap(cveIssueRaw)
+	cveIssueMap := StructToMap(cveIssueRaw)
 	for s, i := range cveMap {
 		cveIssueMap[s] = i
 	}
