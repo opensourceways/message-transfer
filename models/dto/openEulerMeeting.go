@@ -26,4 +26,6 @@ type OpenEulerMeetingRaw struct {
 		Group     int    `json:"group"`
 		Mplatform string `json:"mplatform"`
 	} `json:"msg"`
+	MeetingStartTime string `json:"meeting_start_time"`
+	MeetingEndTime   string `json:"meeting_end_time"`
 }

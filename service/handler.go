@@ -107,15 +107,8 @@ func EurBuildHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
-
-	newRaw := dto.EurBuildMessageRawWithSourceGroup{
-		Body:        raw.Body,
-		Headers:     raw.Headers,
-		ID:          raw.ID,
-		Topic:       raw.Topic,
-		SourceGroup: fmt.Sprintf("%s/%s", raw.Body.Owner, raw.Body.Copr),
-	}
-	rawMap := dto.StructToMap(newRaw)
+	raw.SourceGroup = fmt.Sprintf("%s/%s", raw.Body.Owner, raw.Body.Copr)
+	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
 }
 
@@ -125,6 +118,8 @@ func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	raw.MeetingStartTime = raw.Msg.Date + raw.Msg.Start
+	raw.MeetingEndTime = raw.Msg.Date + raw.Msg.End
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.MeetingConfigInstance.Kafka)
 }
