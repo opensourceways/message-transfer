@@ -159,15 +159,18 @@ user,sourceurl,title,summary是扩展字段
 */
 func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
-	t := template.Must(
-		template.New("example").Funcs(
-			template.FuncMap{
-				"escape": func(s string) string {
-					return strings.ReplaceAll(s, ",", `\\,`)
-				},
-			}).Parse(tmpl))
+	parse, err := template.New("example").Funcs(
+		template.FuncMap{
+			"escape": func(s string) string {
+				return strings.ReplaceAll(s, ",", `\\,`)
+			},
+		}).Parse(tmpl)
+	if err != nil {
+		logrus.Error(err)
+	}
+	t := template.Must(parse, nil)
 	var resultBuffer bytes.Buffer
-	err := t.Execute(&resultBuffer, raw)
+	err = t.Execute(&resultBuffer, raw)
 	if err != nil {
 		logrus.Error(err.Error())
 		return
