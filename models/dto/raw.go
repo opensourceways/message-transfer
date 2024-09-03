@@ -69,10 +69,18 @@ func StructToMap(obj interface{}) map[string]interface{} {
 }
 
 func (raw *Raw) Flatten() map[string]interface{} {
-	s, _ := json.Marshal(raw)
+	s, err := json.Marshal(raw)
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
 	flatJSON, _ := flattener.FlattenJSON(string(s), flattener.DotSeparator)
 	flatMap := make(map[string]interface{})
-	_ = json.Unmarshal([]byte(flatJSON), &flatMap)
+	err = json.Unmarshal([]byte(flatJSON), &flatMap)
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
 	return flatMap
 }
 
@@ -95,40 +103,41 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
-	sourceGroup := event.Extensions()["sourcegroup"].(string)
-	result := event.Extensions()["relatedusers"].(string)
-	lResult := strings.Split(result, ",")
-	if source == giteeSource || source == cveSource {
-		lSourceGroup := strings.Split(sourceGroup, "/")
-		owner, repo := lSourceGroup[0], lSourceGroup[1]
-		giteeType := event.Type()
-		allAdmins, err := utils.GetAllAdmins(owner, repo)
-		if err != nil {
-			logrus.Errorf("get admins failed, err:%v", err)
-		}
+	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
+		if result, ok := event.Extensions()["relatedusers"].(string); ok {
+			lResult := strings.Split(result, ",")
+			if source == giteeSource || source == cveSource {
+				lSourceGroup := strings.Split(sourceGroup, "/")
+				owner, repo := lSourceGroup[0], lSourceGroup[1]
+				giteeType := event.Type()
+				allAdmins, err := utils.GetAllAdmins(owner, repo)
+				if err != nil {
+					logrus.Errorf("get admins failed, err:%v", err)
+				}
 
-		switch giteeType {
-		case "pr":
-			lResult = append(lResult, allAdmins...)
-		case "push":
-			lResult = append(lResult, allAdmins...)
-		case "issue":
-			lResult = append(lResult, allAdmins...)
+				switch giteeType {
+				case "pr":
+					lResult = append(lResult, allAdmins...)
+				case "push":
+					lResult = append(lResult, allAdmins...)
+				case "issue":
+					lResult = append(lResult, allAdmins...)
+				}
+			} else if source == meetingSource {
+				maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
+				lResult = append(lResult, maintainers...)
+				lResult = append(lResult, committers...)
+			}
+			resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).ToSlice()
+			var stringList []string
+			for _, str := range resultList {
+				if str != "" {
+					stringList = append(stringList, str)
+				}
+			}
+			event.SetExtension("relatedusers", strings.Join(escapeCommas(stringList), ","))
 		}
-	} else if source == meetingSource {
-		maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
-		lResult = append(lResult, maintainers...)
-		lResult = append(lResult, committers...)
 	}
-	resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).ToSlice()
-	var stringList []string
-	for _, str := range resultList {
-		if str != "" {
-			stringList = append(stringList, str)
-		}
-
-	}
-	event.SetExtension("relatedusers", strings.Join(escapeCommas(stringList), ","))
 }
 
 func escapeCommas(s []string) []string {
@@ -150,13 +159,19 @@ user,sourceurl,title,summary是扩展字段
 */
 func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
-	t := template.Must(template.New("example").Funcs(template.FuncMap{
-		"escape": func(s string) string {
-			return strings.ReplaceAll(s, ",", `\\,`)
-		},
-	}).Parse(tmpl))
+	t := template.Must(
+		template.New("example").Funcs(
+			template.FuncMap{
+				"escape": func(s string) string {
+					return strings.ReplaceAll(s, ",", `\\,`)
+				},
+			}).Parse(tmpl))
 	var resultBuffer bytes.Buffer
-	t.Execute(&resultBuffer, raw)
+	err := t.Execute(&resultBuffer, raw)
+	if err != nil {
+		logrus.Error(err.Error())
+		return
+	}
 	result := resultBuffer.String()
 	switch config.Field {
 	case "id":

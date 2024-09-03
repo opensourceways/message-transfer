@@ -68,13 +68,19 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		allCollaborators = append(allCollaborators, members...)
 
 		if totalCount == 0 {
-			totalCount, _ = strconv.Atoi(resp.Header.Get("total_count"))
+			totalCount, err = strconv.Atoi(resp.Header.Get("total_count"))
+			if err != nil {
+				return nil, err
+			}
 		}
 		if len(members) < perPage {
 			break
 		}
 		page++
-		resp.Body.Close()
+		err = resp.Body.Close()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var admins []string
@@ -84,87 +90,4 @@ func GetAllAdmins(owner, repo string) ([]string, error) {
 		}
 	}
 	return admins, nil
-}
-
-func GetAllWatchers(owner, repo string) ([]string, error) {
-	var allWatchers []User
-	page := 1
-	perPage := 100
-
-	var totalCount int
-
-	for {
-		url := fmt.Sprintf(config.GiteeWatcherUrl, owner, repo, config.GiteeAccessToken, page, perPage)
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return nil, err
-		}
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		var members []User
-		err = json.Unmarshal(body, &members)
-		if err != nil {
-			return nil, err
-		}
-
-		allWatchers = append(allWatchers, members...)
-
-		if totalCount == 0 {
-			totalCount, _ = strconv.Atoi(resp.Header.Get("total_count"))
-		}
-
-		if len(members) < perPage {
-			break
-		}
-		page++
-		resp.Body.Close()
-	}
-
-	var logins []string
-	for _, watcher := range allWatchers {
-		logins = append(logins, watcher.Login)
-	}
-	return logins, nil
-}
-
-func GetAllContributors(owner, repo string) ([]string, error) {
-	var allContributors []Contributor
-	url := fmt.Sprintf(config.GiteeContributorUrl, owner, repo, config.GiteeAccessToken)
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var members []Contributor
-	err = json.Unmarshal(body, &members)
-	if err != nil {
-		return nil, err
-	}
-
-	allContributors = append(allContributors, members...)
-	var logins []string
-	for _, contributor := range allContributors {
-		logins = append(logins, contributor.Name)
-	}
-	return logins, nil
 }
