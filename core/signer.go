@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
-
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,7 +17,7 @@ import (
 )
 
 const (
-	DateFormat           = "20060102T150405Z"
+	DateFormat           = "20060102T150405Z" // DateFormat date format.
 	SignAlgorithm        = "SDK-HMAC-SHA256"
 	HeaderXDateTime      = "X-Sdk-Date"
 	HeaderXHost          = "host"
@@ -34,7 +33,7 @@ func hmacsha256(keyByte []byte, dataStr string) ([]byte, error) {
 	return hm.Sum(nil), nil
 }
 
-// Build a CanonicalRequest from a regular request string
+// CanonicalRequest Build a CanonicalRequest from a regular request string
 func CanonicalRequest(request *http.Request, signedHeaders []string) (string, error) {
 	var hexencode string
 	var err error
@@ -50,7 +49,9 @@ func CanonicalRequest(request *http.Request, signedHeaders []string) (string, er
 			return "", err
 		}
 	}
-	return fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s", request.Method, CanonicalURI(request), CanonicalQueryString(request), CanonicalHeaders(request, signedHeaders), strings.Join(signedHeaders, ";"), hexencode), err
+	return fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s", request.Method, CanonicalURI(request),
+		CanonicalQueryString(request), CanonicalHeaders(request, signedHeaders),
+		strings.Join(signedHeaders, ";"), hexencode), err
 }
 
 // CanonicalURI returns request uri
@@ -67,7 +68,7 @@ func CanonicalURI(request *http.Request) string {
 	return urlpath
 }
 
-// CanonicalQueryString
+// CanonicalQueryString canonical query string.
 func CanonicalQueryString(request *http.Request) string {
 	var keys []string
 	queryMap := request.URL.Query()
@@ -89,7 +90,7 @@ func CanonicalQueryString(request *http.Request) string {
 	return queryStr
 }
 
-// CanonicalHeaders
+// CanonicalHeaders canonical headers.
 func CanonicalHeaders(request *http.Request, signerHeaders []string) string {
 	var canonicalHeaders []string
 	header := make(map[string][]string)
@@ -109,7 +110,7 @@ func CanonicalHeaders(request *http.Request, signerHeaders []string) string {
 	return fmt.Sprintf("%s\n", strings.Join(canonicalHeaders, "\n"))
 }
 
-// SignedHeaders
+// SignedHeaders signed headers.
 func SignedHeaders(r *http.Request) []string {
 	var signedHeaders []string
 	for key := range r.Header {
@@ -119,7 +120,7 @@ func SignedHeaders(r *http.Request) []string {
 	return signedHeaders
 }
 
-// RequestPayload
+// RequestPayload request payload.
 func RequestPayload(request *http.Request) ([]byte, error) {
 	if request.Body == nil {
 		return []byte(""), nil
@@ -132,7 +133,7 @@ func RequestPayload(request *http.Request) ([]byte, error) {
 	return bodyByte, err
 }
 
-// Create a "String to Sign".
+// StringToSign Create a "String to Sign".
 func StringToSign(canonicalRequest string, t time.Time) (string, error) {
 	hashStruct := sha256.New()
 	_, err := hashStruct.Write([]byte(canonicalRequest))
@@ -143,7 +144,7 @@ func StringToSign(canonicalRequest string, t time.Time) (string, error) {
 		SignAlgorithm, t.UTC().Format(DateFormat), hashStruct.Sum(nil)), nil
 }
 
-// Create the HWS Signature.
+// SignStringToSign Create the HWS Signature.
 func SignStringToSign(stringToSign string, signingKey []byte) (string, error) {
 	hmsha, err := hmacsha256(signingKey, stringToSign)
 	return fmt.Sprintf("%x", hmsha), err
@@ -159,18 +160,20 @@ func HexEncodeSHA256Hash(body []byte) (string, error) {
 	return fmt.Sprintf("%x", hashStruct.Sum(nil)), err
 }
 
-// Get the finalized value for the "Authorization" header. The signature parameter is the output from SignStringToSign
+// AuthHeaderValue Get the finalized value for the "Authorization" header.
+// The signature parameter is the output from SignStringToSign
 func AuthHeaderValue(signatureStr, accessKeyStr string, signedHeaders []string) string {
-	return fmt.Sprintf("%s Access=%s, SignedHeaders=%s, Signature=%s", SignAlgorithm, accessKeyStr, strings.Join(signedHeaders, ";"), signatureStr)
+	return fmt.Sprintf("%s Access=%s, SignedHeaders=%s, Signature=%s", SignAlgorithm,
+		accessKeyStr, strings.Join(signedHeaders, ";"), signatureStr)
 }
 
-// Signature HWS meta
+// Signer Signature HWS meta
 type Signer struct {
 	Key    string
 	Secret string
 }
 
-// SignRequest set Authorization header
+// Sign SignRequest set Authorization header
 func (s *Signer) Sign(request *http.Request) error {
 	var t time.Time
 	var err error

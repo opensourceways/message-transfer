@@ -1,4 +1,4 @@
-// based on https://github.com/golang/go/blob/master/src/net/url/url.go
+// Package core based on https://github.com/golang/go/blob/master/src/net/url/url.go
 // Copyright 2009 The Go Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
@@ -6,7 +6,8 @@
 package core
 
 func shouldEscape(c byte) bool {
-	if 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9' || c == '_' || c == '-' || c == '~' || c == '.' {
+	if 'A' <= c && c <= 'Z' || 'a' <= c && c <= 'z' || '0' <= c && c <= '9' || c == '_' ||
+		c == '-' || c == '~' || c == '.' {
 		return false
 	}
 	return true

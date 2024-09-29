@@ -1,8 +1,8 @@
 /*
-Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 */
 
-// Package repository provides custom error types and utility functions for error handling.
+// Package domain repository provides custom error types and utility functions for error handling.
 package domain
 
 // ErrorDuplicateCreating represents an error indicating a duplicate creation attempt.

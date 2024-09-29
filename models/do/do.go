@@ -1,3 +1,8 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package do models do
 package do
 
 import (
@@ -7,8 +12,7 @@ import (
 	"gorm.io/datatypes"
 )
 
-type JSONB []interface{}
-
+// MessageCloudEventDO message cloud event do.
 type MessageCloudEventDO struct {
 	postgresql.CommonModel
 	EventId         string         `gorm:"column:event_id"`
@@ -29,10 +33,12 @@ type MessageCloudEventDO struct {
 	MailSummary     string         `gorm:"column:mail_summary"`
 }
 
+// TableName get cloud event table name.
 func (m *MessageCloudEventDO) TableName() string {
 	return "message_center.cloud_event_message"
 }
 
+// SubScribeConfigDO subscribe config do.
 type SubScribeConfigDO struct {
 	postgresql.CommonModel
 	Source     string         `gorm:"column:source"`
@@ -42,10 +48,12 @@ type SubScribeConfigDO struct {
 	IsDeleted  bool           `gorm:"column:is_deleted"`
 }
 
+// TableName get subs table name.
 func (m *SubScribeConfigDO) TableName() string {
 	return "subscribe_config"
 }
 
+// PushConfigDO push config do.
 type PushConfigDO struct {
 	postgresql.CommonModel
 	SubScribeId int    `gorm:"column:subscribe_id"`
@@ -54,6 +62,7 @@ type PushConfigDO struct {
 	IsDeleted   bool   `gorm:"column:is_deleted"`
 }
 
+// PushConfigDO get push table name.
 func (m *SubScribeConfigDO) PushConfigDO() string {
 	return "push_config"
 }

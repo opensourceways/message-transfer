@@ -1,3 +1,8 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package dto models dto.
 package dto
 
 import (
@@ -12,21 +17,25 @@ import (
 	"github.com/opensourceways/message-transfer/models/do"
 )
 
+// CloudEvents cloud event.
 type CloudEvents struct {
 	cloudevents.Event
 }
 
+// NewCloudEvents create a new cloud event.
 func NewCloudEvents() CloudEvents {
 	return CloudEvents{
 		Event: cloudevents.NewEvent(cloudevents.VersionV1),
 	}
 }
 
+// Message marshal event to msg.
 func (event CloudEvents) Message() ([]byte, error) {
 	body, err := json.Marshal(event)
 	return body, err
 }
 
+// SaveDb save cloud event into db.
 func (event CloudEvents) SaveDb() error {
 	eventDO := event.toCloudEventDO()
 	result := postgresql.DB().Clauses(clause.OnConflict{

@@ -1,5 +1,11 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package dto models dto of eur build.
 package dto
 
+// EurBuildMessageRaw eur build message raw.
 type EurBuildMessageRaw struct {
 	Body struct {
 		User    string      `json:"user"`

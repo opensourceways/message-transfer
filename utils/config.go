@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package utils
 
 import "time"
@@ -16,11 +20,13 @@ type Config struct {
 
 var config Config
 
+// Init init utils config.
 func Init(cfg *Config) error {
 	config = *cfg
 	return nil
 }
 
+// GetConsumeSleepTime get kafka consume sleep time.
 func GetConsumeSleepTime() time.Duration {
 	return time.Duration(config.ConsumeSleepTime) * time.Second
 }

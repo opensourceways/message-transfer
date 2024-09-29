@@ -6,17 +6,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var CveConfigInstance CVEConfig
+// EurBuildConfigInstance eur build config instance.
+var EurBuildConfigInstance EurBuildConfig
 
-type CVEConfig struct {
+// EurBuildConfig definition of eur build config.
+type EurBuildConfig struct {
 	Kafka kafka.ConsumeConfig `yaml:"kafka"`
 }
 
-func InitCVEConfig(configFile string) {
-	cfg := new(CVEConfig)
+// InitEurBuildConfig init eur build config.
+func InitEurBuildConfig(configFile string) {
+	cfg := new(EurBuildConfig)
 	if err := utils.LoadFromYaml(configFile, cfg); err != nil {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
-	CveConfigInstance = *cfg
+	EurBuildConfigInstance = *cfg
 }

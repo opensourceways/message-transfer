@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package utils
 
 import (
@@ -9,19 +13,23 @@ import (
 	"golang.org/x/xerrors"
 )
 
+// RepoSig definition of repoSig.
 type RepoSig struct {
 	Sig string `json:"data"`
 }
 
+// SigInfo sig info.
 type SigInfo struct {
 	Data []SigData `json:"data"`
 }
 
+// SigData sig data.
 type SigData struct {
 	Maintainers []string `json:"maintainers"`
 	Committers  []string `json:"committers"`
 }
 
+// GetRepoSigInfo get repo sig info.
 func GetRepoSigInfo(repo string) (string, error) {
 	url := fmt.Sprintf(config.EulerRepoSigUrl, repo)
 	req, err := http.NewRequest("GET", url, nil)
@@ -49,6 +57,7 @@ func GetRepoSigInfo(repo string) (string, error) {
 	return repoSig.Sig, nil
 }
 
+// GetUserSigInfo get user sig info.
 func GetUserSigInfo(userName string) (string, error) {
 	url := fmt.Sprintf(config.EulerUserSigUrl, userName)
 	req, err := http.NewRequest("GET", url, nil)
@@ -76,6 +85,7 @@ func GetUserSigInfo(userName string) (string, error) {
 	return repoSig.Sig, nil
 }
 
+// GetMembersBySig get members by sig.
 func GetMembersBySig(sig string) ([]string, []string, error) {
 	url := fmt.Sprintf(config.QuerySigInfo, sig)
 	req, err := http.NewRequest("GET", url, nil)
