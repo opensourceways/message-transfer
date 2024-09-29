@@ -166,7 +166,7 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 			},
 		}).Parse(tmpl)
 	if err != nil {
-		logrus.Error(err)
+		logrus.Error(config.Field, err)
 	}
 	t := template.Must(parse, nil)
 	var resultBuffer bytes.Buffer
@@ -202,5 +202,9 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 		event.SetExtension("summary", result)
 	case "relatedUsers":
 		event.SetExtension("relatedusers", result)
+	case "mailTitle":
+		event.SetExtension("mailtitle", result)
+	case "mailSummary":
+		event.SetExtension("mailsummary", result)
 	}
 }
