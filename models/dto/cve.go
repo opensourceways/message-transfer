@@ -1,3 +1,8 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package dto models dto of cve
 package dto
 
 import (
@@ -6,12 +11,14 @@ import (
 	"github.com/opensourceways/go-gitee/gitee"
 )
 
+// CVEIssueRaw cve issue raw.
 type CVEIssueRaw struct {
 	gitee.IssueEvent
 	SigGroupName   string   `json:"sig_group_name"`
 	SigMaintainers []string `json:"sig_maintainers"`
 }
 
+// ToMap transfer cve issue raw to map[string]interface{}.
 func (cveIssueRaw *CVEIssueRaw) ToMap() map[string]interface{} {
 	cveMap := extractVariables(*cveIssueRaw.Description)
 	cveIssueMap := StructToMap(cveIssueRaw)

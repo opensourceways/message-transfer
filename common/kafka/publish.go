@@ -1,20 +1,21 @@
 /*
-Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 */
 
-// Package messageadapter provides an adapter for working with message-related functionality.
+// Package kafka send msg to kafka.
 package kafka
 
 import (
 	"fmt"
+
 	kfklib "github.com/opensourceways/kafka-lib/agent"
-	"github.com/opensourceways/message-transfer/models/message"
 	"github.com/sirupsen/logrus"
+
+	"github.com/opensourceways/message-transfer/models/message"
 )
 
-// sendMsg is a method on the messageAdapter struct that takes an EventMessage
+// SendMsg is a method on the messageAdapter struct that takes an EventMessage
 // and sends it to the ModelCreate topic.
-
 func SendMsg(topic string, e message.EventMessage) error {
 	res := send(topic, e)
 	logrus.Info("send to kafka success topic = " + topic)

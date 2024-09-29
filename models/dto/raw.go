@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package dto
 
 import (
@@ -18,6 +22,7 @@ import (
 	"github.com/opensourceways/message-transfer/utils"
 )
 
+// Raw declare raw.
 type Raw map[string]interface{}
 
 const (
@@ -26,6 +31,7 @@ const (
 	cveSource     = "cve"
 )
 
+// StructToMap struct to map.
 func StructToMap(obj interface{}) map[string]interface{} {
 	objValue := reflect.ValueOf(obj)
 	objType := reflect.TypeOf(obj)
@@ -68,6 +74,7 @@ func StructToMap(obj interface{}) map[string]interface{} {
 	return result
 }
 
+// Flatten flatten func.
 func (raw *Raw) Flatten() map[string]interface{} {
 	s, err := json.Marshal(raw)
 	if err != nil {
@@ -84,6 +91,7 @@ func (raw *Raw) Flatten() map[string]interface{} {
 	return flatMap
 }
 
+//ToCloudEventByConfig
 /*
 *
 读取数据库的配置，把原始消息转换成标准的cloudevents字段
@@ -101,6 +109,7 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	return newEvent
 }
 
+// GetRelateUsers get relate users.
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
 	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {

@@ -1,3 +1,8 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package utils some func.
 package utils
 
 import (
@@ -7,6 +12,7 @@ import (
 	"net/http"
 )
 
+// Collaborator definition of collaborator.
 type Collaborator struct {
 	Id          int        `json:"id"`
 	Login       string     `json:"login"`
@@ -14,12 +20,15 @@ type Collaborator struct {
 	Type        string     `json:"type"`
 	Permissions Permission `json:"permissions"`
 }
+
+// Contributor definition of contributor.
 type Contributor struct {
 	Email         string `json:"email"`
 	Name          string `json:"name"`
 	Contributions int    `json:"contributions"`
 }
 
+// User definition of user.
 type User struct {
 	Id    int    `json:"id"`
 	Login string `json:"login"`
@@ -27,16 +36,19 @@ type User struct {
 	Type  string `json:"type"`
 }
 
+// Permission definition of permission.
 type Permission struct {
 	Pull  bool `json:"pull"`
 	Push  bool `json:"push"`
 	Admin bool `json:"admin"`
 }
 
+// IsAdmin check permission is admin or not.
 func (p *Permission) IsAdmin() bool {
 	return p.Admin
 }
 
+// GetAllAdmins get all admins.
 func GetAllAdmins(owner, repo string) ([]string, error) {
 	allCollaborators, err := fetchCollaborators(owner, repo)
 	if err != nil {

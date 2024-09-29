@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package config
 
 import (
@@ -6,17 +10,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var MeetingConfigInstance MeetingConfig
+// CveConfigInstance cve config instance.
+var CveConfigInstance CVEConfig
 
-type MeetingConfig struct {
+// CVEConfig definition of cve config.
+type CVEConfig struct {
 	Kafka kafka.ConsumeConfig `yaml:"kafka"`
 }
 
-func InitMeetingConfig(configFile string) {
-	cfg := new(MeetingConfig)
+// InitCVEConfig init cve config.
+func InitCVEConfig(configFile string) {
+	cfg := new(CVEConfig)
 	if err := utils.LoadFromYaml(configFile, cfg); err != nil {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
-	MeetingConfigInstance = *cfg
+	CveConfigInstance = *cfg
 }

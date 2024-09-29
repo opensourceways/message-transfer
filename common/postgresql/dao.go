@@ -1,5 +1,5 @@
 /*
-Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 */
 
 // Package postgresql provides functionality for interacting with PostgreSQL databases.
@@ -101,12 +101,12 @@ func (dao *daoImpl) LikeFilter(field, value string) (query, arg string) {
 }
 
 // IntersectionFilter generates a query string and argument for an "intersection" filter condition.
-func (dao *daoImpl) IntersectionFilter(field string, value []string) (query string, arg pq.StringArray) {
-	query = fmt.Sprintf(`%s @> ?`, field)
+func (dao *daoImpl) IntersectionFilter(field string, value []string) (string, pq.StringArray) {
+	query := fmt.Sprintf(`%s @> ?`, field)
 
-	arg = pq.StringArray(value)
+	arg := pq.StringArray(value)
 
-	return
+	return query, arg
 }
 
 // EqualQuery generates a query string for an "equal" filter condition.

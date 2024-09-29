@@ -1,7 +1,13 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
+// Package dto models dto of meeting
 package dto
 
 import "time"
 
+// OpenEulerMeetingRaw openEuler meeting raw.
 type OpenEulerMeetingRaw struct {
 	Action string `json:"action"`
 	Msg    struct {

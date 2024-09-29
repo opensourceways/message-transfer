@@ -1,5 +1,5 @@
 /*
-Copyright (c) Huawei Technologies Co., Ltd. 2023. All rights reserved
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 */
 
 // Package kafka provides functionality for interacting with Issue.
@@ -13,9 +13,6 @@ import (
 const (
 	deaultVersion = "2.1.0"
 )
-
-// Exit is an exported variable that provides the exit function for the Issue package.
-var Exit = kfklib.Exit
 
 // Config represents the configuration for Issue.
 type Config struct {
