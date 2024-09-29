@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -37,6 +38,17 @@ func CVEHandle(payload []byte, _ map[string]string) error {
 	if msgBodyErr != nil {
 		return msgBodyErr
 	}
+	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
+	if err != nil {
+		return err
+	}
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
+	if err != nil {
+		return err
+	}
+
+	raw.SigGroupName = sigGroupName
+	raw.SigMaintainers = sigMaintainers
 	rawMap := raw.ToMap()
 	return handle(rawMap, config.CveConfigInstance.Kafka)
 }
@@ -51,7 +63,19 @@ func GiteeIssueHandle(payload []byte, _ map[string]string) error {
 	if err != nil {
 		return err
 	}
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
+	if err != nil {
+		return err
+	}
+	repo := strings.Split(raw.Repository.FullName, "/")
+	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
+	if err != nil {
+		return err
+	}
+
 	raw.SigGroupName = sigGroupName
+	raw.SigMaintainers = sigMaintainers
+	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Issue)
 }
@@ -66,7 +90,20 @@ func GiteePushHandle(payload []byte, _ map[string]string) error {
 	if err != nil {
 		return err
 	}
+
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
+	if err != nil {
+		return err
+	}
+	repo := strings.Split(raw.Repository.FullName, "/")
+	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
+	if err != nil {
+		return err
+	}
+
 	raw.SigGroupName = sigGroupName
+	raw.SigMaintainers = sigMaintainers
+	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Push)
 }
@@ -81,7 +118,19 @@ func GiteePrHandle(payload []byte, _ map[string]string) error {
 	if err != nil {
 		return err
 	}
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
+	if err != nil {
+		return err
+	}
+	repo := strings.Split(raw.Repository.FullName, "/")
+	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
+	if err != nil {
+		return err
+	}
+
 	raw.SigGroupName = sigGroupName
+	raw.SigMaintainers = sigMaintainers
+	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.PR)
 }
@@ -96,7 +145,20 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	if err != nil {
 		return err
 	}
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
+	if err != nil {
+		return err
+	}
+
+	repo := strings.Split(raw.Repository.FullName, "/")
+	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
+	if err != nil {
+		return err
+	}
+
 	raw.SigGroupName = sigGroupName
+	raw.SigMaintainers = sigMaintainers
+	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.GiteeConfigInstance.Note)
 }
@@ -116,10 +178,18 @@ func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 	var raw dto.OpenEulerMeetingRaw
 	msgBodyErr := json.Unmarshal(payload, &raw)
 	if msgBodyErr != nil {
+		logrus.Errorf("unmarshal meeting message failed, err:%v", msgBodyErr)
 		return msgBodyErr
 	}
+
 	raw.MeetingStartTime = raw.Msg.Date + raw.Msg.Start
 	raw.MeetingEndTime = raw.Msg.Date + raw.Msg.End
+	raw.Time = time.Now()
+	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
+	if err != nil {
+		return err
+	}
+	raw.SigMaintainers = sigMaintainers
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.MeetingConfigInstance.Kafka)
 }

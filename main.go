@@ -5,16 +5,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/service"
 	"github.com/opensourceways/message-transfer/utils"
 	"github.com/opensourceways/server-common-lib/logrusutil"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: true, // 使 JSON 输出更美观
+	})
 	logrusutil.ComponentInit("message-transfer")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
