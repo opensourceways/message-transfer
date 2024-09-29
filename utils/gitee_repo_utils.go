@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 )
 
 type Collaborator struct {
@@ -39,58 +38,67 @@ func (p *Permission) IsAdmin() bool {
 }
 
 func GetAllAdmins(owner, repo string) ([]string, error) {
+	allCollaborators, err := fetchCollaborators(owner, repo)
+	if err != nil {
+		return nil, err
+	}
+
+	return filterAdmins(allCollaborators), nil
+}
+
+func fetchCollaborators(owner, repo string) ([]Collaborator, error) {
 	var allCollaborators []Collaborator
 	page := 1
 	perPage := 100
 
-	var totalCount int
-
 	for {
-		url := fmt.Sprintf(config.GiteeCollaboratorUrl, owner, repo, config.GiteeAccessToken, page, perPage)
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return nil, err
-		}
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		var members []Collaborator
-		err = json.Unmarshal(body, &members)
+		members, err := fetchCollaboratorsPage(owner, repo, page, perPage)
 		if err != nil {
 			return nil, err
 		}
 
 		allCollaborators = append(allCollaborators, members...)
 
-		if totalCount == 0 {
-			totalCount, err = strconv.Atoi(resp.Header.Get("total_count"))
-			if err != nil {
-				return nil, err
-			}
-		}
 		if len(members) < perPage {
 			break
 		}
 		page++
-		err = resp.Body.Close()
-		if err != nil {
-			return nil, err
-		}
+	}
+	return allCollaborators, nil
+}
+
+func fetchCollaboratorsPage(owner, repo string, page, perPage int) ([]Collaborator, error) {
+	url := fmt.Sprintf(config.GiteeCollaboratorUrl, owner, repo, config.GiteeAccessToken, page, perPage)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
 	}
 
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var members []Collaborator
+	if err = json.Unmarshal(body, &members); err != nil {
+		return nil, err
+	}
+
+	return members, nil
+}
+
+func filterAdmins(collaborators []Collaborator) []string {
 	var admins []string
-	for _, collaborator := range allCollaborators {
+	for _, collaborator := range collaborators {
 		if collaborator.Permissions.IsAdmin() {
 			admins = append(admins, collaborator.Login, collaborator.Name)
 		}
 	}
-	return admins, nil
+	return admins
 }

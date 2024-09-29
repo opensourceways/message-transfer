@@ -106,38 +106,52 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
 		if result, ok := event.Extensions()["relatedusers"].(string); ok {
 			lResult := strings.Split(result, ",")
-			if source == giteeSource || source == cveSource {
-				lSourceGroup := strings.Split(sourceGroup, "/")
-				owner, repo := lSourceGroup[0], lSourceGroup[1]
-				giteeType := event.Type()
-				allAdmins, err := utils.GetAllAdmins(owner, repo)
-				if err != nil {
-					logrus.Errorf("get admins failed, err:%v", err)
-				}
 
-				switch giteeType {
-				case "pr":
-					lResult = append(lResult, allAdmins...)
-				case "push":
-					lResult = append(lResult, allAdmins...)
-				case "issue":
-					lResult = append(lResult, allAdmins...)
-				}
-			} else if source == meetingSource {
-				maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
-				lResult = append(lResult, maintainers...)
-				lResult = append(lResult, committers...)
+			switch source {
+			case giteeSource, cveSource:
+				lResult = append(lResult, raw.getGiteeRelatedUsers(event, sourceGroup)...)
+			case meetingSource:
+				lResult = append(lResult, raw.getMeetingRelatedUsers(sourceGroup)...)
 			}
-			resultList := stream.Of(lResult...).Distinct(func(item string) any { return item }).ToSlice()
-			var stringList []string
-			for _, str := range resultList {
-				if str != "" {
-					stringList = append(stringList, str)
-				}
-			}
-			event.SetExtension("relatedusers", strings.Join(escapeCommas(stringList), ","))
+
+			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
 		}
 	}
+}
+
+func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
+	lSourceGroup := strings.Split(sourceGroup, "/")
+	owner, repo := lSourceGroup[0], lSourceGroup[1]
+	giteeType := event.Type()
+
+	allAdmins, err := utils.GetAllAdmins(owner, repo)
+	if err != nil {
+		logrus.Errorf("get admins failed, err:%v", err)
+		return []string{}
+	}
+
+	switch giteeType {
+	case "pr", "push", "issue":
+		return allAdmins
+	default:
+		return []string{}
+	}
+}
+
+func (raw *Raw) getMeetingRelatedUsers(sourceGroup string) []string {
+	maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
+	return append(maintainers, committers...)
+}
+
+func (raw *Raw) distinct(items []string) []string {
+	resultList := stream.Of(items...).Distinct(func(item string) any { return item }).ToSlice()
+	var stringList []string
+	for _, str := range resultList {
+		if str != "" {
+			stringList = append(stringList, str)
+		}
+	}
+	return stringList
 }
 
 func escapeCommas(s []string) []string {
