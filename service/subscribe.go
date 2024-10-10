@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package service
 
 import (
@@ -6,37 +10,51 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// SubscribeEurRaw subscribe eur topic.
 func SubscribeEurRaw() {
 	logrus.Info("subscribing to eur topic")
-	_ = kfklib.Subscribe(config.EurBuildConfigInstance.Kafka.Group, EurBuildHandle, []string{config.EurBuildConfigInstance.Kafka.Topic})
+	_ = kfklib.Subscribe(config.EurBuildConfigInstance.Kafka.Group, EurBuildHandle,
+		[]string{config.EurBuildConfigInstance.Kafka.Topic})
 }
 
+// SubscribeGiteeIssue subscribe gitee issue topic.
 func SubscribeGiteeIssue() {
 	logrus.Info("subscribing to issue topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, GiteeIssueHandle, []string{config.GiteeConfigInstance.Issue.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Issue.Group, GiteeIssueHandle,
+		[]string{config.GiteeConfigInstance.Issue.Topic})
 }
 
+// SubscribeGiteePush subscribe gitee push topic.
 func SubscribeGiteePush() {
 	logrus.Info("subscribing to push topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Push.Group, GiteePushHandle, []string{config.GiteeConfigInstance.Push.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Push.Group, GiteePushHandle,
+		[]string{config.GiteeConfigInstance.Push.Topic})
 }
 
+// SubscribeGiteePr subscribe gitee pullRequest topic.
 func SubscribeGiteePr() {
 	logrus.Info("subscribing to pr topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.PR.Group, GiteePrHandle, []string{config.GiteeConfigInstance.PR.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.PR.Group, GiteePrHandle,
+		[]string{config.GiteeConfigInstance.PR.Topic})
 }
 
+// SubscribeGiteeNote subscribe gitee note topic.
 func SubscribeGiteeNote() {
 	logrus.Info("subscribing to note topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Note.Group, GiteeNoteHandle, []string{config.GiteeConfigInstance.Note.Topic})
+	_ = kfklib.Subscribe(config.GiteeConfigInstance.Note.Group, GiteeNoteHandle,
+		[]string{config.GiteeConfigInstance.Note.Topic})
 }
 
+// SubscribeOpenEulerMeeting subscribe meeting topic.
 func SubscribeOpenEulerMeeting() {
 	logrus.Info("subscribing to openEuler meeting topic")
-	_ = kfklib.Subscribe(config.MeetingConfigInstance.Kafka.Group, OpenEulerMeetingHandle, []string{config.MeetingConfigInstance.Kafka.Topic})
+	_ = kfklib.Subscribe(config.MeetingConfigInstance.Kafka.Group, OpenEulerMeetingHandle,
+		[]string{config.MeetingConfigInstance.Kafka.Topic})
 }
 
+// SubscribeCVERaw subscribe cve topic.
 func SubscribeCVERaw() {
 	logrus.Info("subscribing to cve topic")
-	_ = kfklib.Subscribe(config.CveConfigInstance.Kafka.Group, CVEHandle, []string{config.CveConfigInstance.Kafka.Topic})
+	_ = kfklib.Subscribe(config.CveConfigInstance.Kafka.Group, CVEHandle,
+		[]string{config.CveConfigInstance.Kafka.Topic})
 }

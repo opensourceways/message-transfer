@@ -1,3 +1,7 @@
+/*
+Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
+*/
+
 package main
 
 import (
@@ -5,16 +9,20 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/opensourceways/server-common-lib/logrusutil"
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/common/postgresql"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/service"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/opensourceways/server-common-lib/logrusutil"
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: true, // 使 JSON 输出更美观
+	})
 	logrusutil.ComponentInit("message-transfer")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
@@ -78,7 +86,7 @@ func initConfig() *config.Config {
 	return cfg
 }
 
-func initTransferConfig(o Options) {
+func initTransferConfig(o options) {
 	config.InitGiteeConfig(o.GiteeConfig)
 	config.InitEurBuildConfig(o.EurBuildConfig)
 	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
@@ -88,15 +96,15 @@ func initTransferConfig(o Options) {
 /*
 获取启动参数，配置文件地址由启动参数传入
 */
-func gatherOptions(fs *flag.FlagSet, args ...string) (Options, error) {
-	var o Options
+func gatherOptions(fs *flag.FlagSet, args ...string) (options, error) {
+	var o options
 	fmt.Println("从环境变量接收参数", args)
 	o.AddFlags(fs)
 	err := fs.Parse(args)
 	return o, err
 }
 
-type Options struct {
+type options struct {
 	Config                 string
 	EurBuildConfig         string
 	GiteeConfig            string
@@ -104,11 +112,13 @@ type Options struct {
 	CVEConfig              string
 }
 
-func (o *Options) AddFlags(fs *flag.FlagSet) {
+// AddFlags add flags.
+func (o *options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.Config, "config-file", "", "Path to config file.")
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
 	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
-	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "", "Path to gitee config file.")
-	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to gitee config file.")
+	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "",
+		"Path to meeting config file.")
+	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to cve config file.")
 
 }
