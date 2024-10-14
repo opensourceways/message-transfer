@@ -31,6 +31,7 @@ type GiteePrRaw struct {
 	SigGroupName   string   `json:"sig_group_name"`
 	SigMaintainers []string `json:"sig_maintainers"`
 	RepoAdmins     []string `json:"repo_admins"`
+	Assignees      []string `json:"assignees"`
 }
 
 // GiteeNoteRaw gitee note raw.

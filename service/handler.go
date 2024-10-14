@@ -136,7 +136,12 @@ func GiteePrHandle(payload []byte, _ map[string]string) error {
 	if err != nil {
 		return err
 	}
+	var assignees []string
+	for _, dt := range raw.PullRequest.Assignees {
+		assignees = append(assignees, dt.Login)
+	}
 
+	raw.Assignees = assignees
 	raw.SigGroupName = sigGroupName
 	raw.SigMaintainers = sigMaintainers
 	raw.RepoAdmins = repoAdmins
