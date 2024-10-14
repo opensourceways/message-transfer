@@ -207,7 +207,7 @@ func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 }
 
 func ForumHandle(payload []byte, _ map[string]string) error {
-	var raw dto.Forum
+	var raw dto.Notification
 	msgBodyErr := json.Unmarshal(payload, &raw)
 	if msgBodyErr != nil {
 		return msgBodyErr
