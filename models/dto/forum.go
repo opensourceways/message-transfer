@@ -2,8 +2,8 @@ package dto
 
 import "time"
 
-// NotificationResponse 是包含所有通知信息的顶级结构体
-type NotificationResponse struct {
+// Forum 是包含所有通知信息的顶级结构体
+type Forum struct {
 	Notifications         []Notification `json:"notifications"`
 	TotalRows             int            `json:"total_rows_notifications"`
 	SeenNotificationID    int            `json:"seen_notification_id"`
