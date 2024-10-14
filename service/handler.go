@@ -205,3 +205,13 @@ func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.MeetingConfigInstance.Kafka)
 }
+
+func ForumHandle(payload []byte, _ map[string]string) error {
+	var raw dto.Forum
+	msgBodyErr := json.Unmarshal(payload, &raw)
+	if msgBodyErr != nil {
+		return msgBodyErr
+	}
+	rawMap := dto.StructToMap(raw)
+	return handle(rawMap, config.ForumConfigInstance.Kafka)
+}
