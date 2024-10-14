@@ -66,7 +66,7 @@ func main() {
 		service.SubscribeCVERaw()
 	}()
 	go func() {
-		service.SubscribeCVERaw()
+		service.SubscribeForumRaw()
 	}()
 
 	select {}
