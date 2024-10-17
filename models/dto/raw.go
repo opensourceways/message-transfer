@@ -166,7 +166,10 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 		logrus.Errorf("get admins failed, err:%v", err)
 		return []string{}
 	}
-
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		PrettyPrint: true, // 启用美化输出
+	})
+	logrus.Info(event.Data())
 	noteAbout, err := getNoteAboutUsers(event.Data())
 	if err != nil {
 		logrus.Errorf("get note about users failed, err:%v", err)
