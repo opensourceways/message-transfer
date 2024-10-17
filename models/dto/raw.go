@@ -7,7 +7,6 @@ package dto
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"reflect"
 	"regexp"
 	"strings"
@@ -111,6 +110,20 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	return newEvent
 }
 
+func (raw *Raw) NoteToCloudEventByConfig(sourceTopic string, noteRaw GiteeNoteRaw) CloudEvents {
+	newEvent := NewCloudEvents()
+	configs := bo.GetTransferConfigFromDb(sourceTopic)
+	if configs != nil {
+		for _, config := range configs {
+			raw.transferField(&newEvent, config)
+		}
+		raw.GetRelateUsers(&newEvent)
+		raw.GetNoteRelatedUsers(&newEvent, noteRaw)
+		newEvent.SetData(cloudevents.ApplicationJSON, raw)
+	}
+	return newEvent
+}
+
 // GetRelateUsers get relate users.
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
@@ -129,8 +142,22 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		}
 	}
 }
+
+// GetNoteRelatedUsers get relate users.
+func (raw *Raw) GetNoteRelatedUsers(event *CloudEvents, noteRaw GiteeNoteRaw) {
+	if _, ok := event.Extensions()["sourcegroup"].(string); ok {
+		if result, ok := event.Extensions()["relatedusers"].(string); ok {
+			lResult := strings.Split(result, ",")
+			noteUsers := extractMentions(*noteRaw.Note)
+			logrus.Infof("about user is %v", noteUsers)
+			lResult = append(lResult, noteUsers...)
+			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
+		}
+	}
+}
+
 func extractMentions(note string) []string {
-	re := regexp.MustCompile(`@([a-zA-Z0-9_]+)`)
+	re := regexp.MustCompile(`@([a-zA-Z0-9_-]+)`)
 	matches := re.FindAllStringSubmatch(note, -1)
 
 	var mentions []string
@@ -140,23 +167,6 @@ func extractMentions(note string) []string {
 		}
 	}
 	return mentions
-}
-
-func getNoteAboutUsers(jsonData []byte) ([]string, error) {
-	if len(jsonData) == 0 {
-		return nil, nil
-	}
-	var data map[string]map[string]string
-	err := json.Unmarshal(jsonData, &data)
-	if err != nil {
-		log.Fatalf("Error parsing JSON: %v", err)
-	}
-	// 提取 Note 字段
-	note := data["NoteEvent"]["Note"]
-
-	// 提取 @xxx 格式的人名
-	mentions := extractMentions(note)
-	return mentions, nil
 }
 
 func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
@@ -169,20 +179,10 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 		logrus.Errorf("get admins failed, err:%v", err)
 		return []string{}
 	}
-	logrus.SetFormatter(&logrus.JSONFormatter{
-		PrettyPrint: true, // 启用美化输出
-	})
-	logrus.WithFields(logrus.Fields{"raw": raw}).Info("raw data")
-	noteAbout, err := getNoteAboutUsers(event.Data())
-	if err != nil {
-		logrus.Errorf("get note about users failed, err:%v", err)
-		return []string{}
-	}
+
 	switch giteeType {
 	case "pr", "push", "issue":
 		return allAdmins
-	case "note":
-		return noteAbout
 	default:
 		return []string{}
 	}
