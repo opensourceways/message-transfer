@@ -7,7 +7,9 @@ package dto
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"reflect"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -127,6 +129,32 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 		}
 	}
 }
+func extractMentions(note string) []string {
+	re := regexp.MustCompile(`@([a-zA-Z0-9_]+)`)
+	matches := re.FindAllStringSubmatch(note, -1)
+
+	var mentions []string
+	for _, match := range matches {
+		if len(match) > 1 {
+			mentions = append(mentions, match[1]) // match[1] 是捕获组
+		}
+	}
+	return mentions
+}
+
+func getNoteAboutUsers(jsonData []byte) ([]string, error) {
+	var data map[string]map[string]string
+	err := json.Unmarshal(jsonData, &data)
+	if err != nil {
+		log.Fatalf("Error parsing JSON: %v", err)
+	}
+	// 提取 Note 字段
+	note := data["NoteEvent"]["Note"]
+
+	// 提取 @xxx 格式的人名
+	mentions := extractMentions(note)
+	return mentions, nil
+}
 
 func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
 	lSourceGroup := strings.Split(sourceGroup, "/")
@@ -139,9 +167,16 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 		return []string{}
 	}
 
+	noteAbout, err := getNoteAboutUsers(event.Data())
+	if err != nil {
+		logrus.Errorf("get note about users failed, err:%v", err)
+		return []string{}
+	}
 	switch giteeType {
 	case "pr", "push", "issue":
 		return allAdmins
+	case "note":
+		return noteAbout
 	default:
 		return []string{}
 	}
