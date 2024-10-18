@@ -187,8 +187,8 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 		logrus.SetFormatter(&logrus.JSONFormatter{
 			PrettyPrint: true, // 启用美化输出
 		})
-		a := StructToMap((*raw)["NoteEvent"])["Note"]
-		logrus.Info(a)
+		a := (*raw)["NoteEvent"]
+		logrus.Infof("the data is %v type is %v", a, reflect.TypeOf(a))
 		return []string{}
 	default:
 		return []string{}
