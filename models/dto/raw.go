@@ -110,20 +110,6 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	return newEvent
 }
 
-func (raw *Raw) NoteToCloudEventByConfig(sourceTopic string, noteRaw GiteeNoteRaw) CloudEvents {
-	newEvent := NewCloudEvents()
-	configs := bo.GetTransferConfigFromDb(sourceTopic)
-	if configs != nil {
-		for _, config := range configs {
-			raw.transferField(&newEvent, config)
-		}
-		raw.GetRelateUsers(&newEvent)
-		raw.GetNoteRelatedUsers(&newEvent, noteRaw)
-		newEvent.SetData(cloudevents.ApplicationJSON, raw)
-	}
-	return newEvent
-}
-
 // GetRelateUsers get relate users.
 func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
@@ -138,18 +124,6 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 				lResult = append(lResult, raw.getMeetingRelatedUsers(sourceGroup)...)
 			}
 
-			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
-		}
-	}
-}
-
-// GetNoteRelatedUsers get relate users.
-func (raw *Raw) GetNoteRelatedUsers(event *CloudEvents, noteRaw GiteeNoteRaw) {
-	if _, ok := event.Extensions()["sourcegroup"].(string); ok {
-		if result, ok := event.Extensions()["relatedusers"].(string); ok {
-			lResult := strings.Split(result, ",")
-			noteUsers := extractMentions(*noteRaw.Note)
-			lResult = append(lResult, noteUsers...)
 			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
 		}
 	}
@@ -183,12 +157,8 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 	case "pr", "push", "issue":
 		return allAdmins
 	case "note":
-		logrus.SetFormatter(&logrus.JSONFormatter{
-			PrettyPrint: true, // 启用美化输出
-		})
-		a := (*raw)["NoteEvent"].(map[string]interface{})
-		logrus.Infof("the data is %v type is %v", a["Note"], reflect.TypeOf(a))
-		return []string{}
+		note := (*raw)["NoteEvent"].(map[string]interface{})["Note"].(string)
+		return extractMentions(note)
 	default:
 		return []string{}
 	}
