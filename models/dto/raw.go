@@ -183,6 +183,13 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 	switch giteeType {
 	case "pr", "push", "issue":
 		return allAdmins
+	case "note":
+		logrus.SetFormatter(&logrus.JSONFormatter{
+			PrettyPrint: true, // 启用美化输出
+		})
+		a := StructToMap((*raw)["NoteEvent"])["Note"]
+		logrus.Info(a)
+		return []string{}
 	default:
 		return []string{}
 	}
