@@ -157,8 +157,17 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 	case "pr", "push", "issue":
 		return allAdmins
 	case "note":
-		note := (*raw)["NoteEvent"].(map[string]interface{})["Note"].(string)
-		return extractMentions(note)
+		if noteEvent, ok := (*raw)["NoteEvent"].(map[string]interface{}); ok {
+			if note, ok := noteEvent["Note"].(string); ok {
+				return extractMentions(note)
+			} else {
+				logrus.Error("Note does not exist or is not a string")
+				return []string{}
+			}
+		} else {
+			logrus.Error("NoteEvent does not exist or is not a map")
+			return []string{}
+		}
 	default:
 		return []string{}
 	}
