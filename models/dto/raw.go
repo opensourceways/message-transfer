@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"reflect"
+	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -128,6 +129,19 @@ func (raw *Raw) GetRelateUsers(event *CloudEvents) {
 	}
 }
 
+func extractMentions(note string) []string {
+	re := regexp.MustCompile(`@([a-zA-Z0-9_-]+)`)
+	matches := re.FindAllStringSubmatch(note, -1)
+
+	var mentions []string
+	for _, match := range matches {
+		if len(match) > 1 {
+			mentions = append(mentions, match[1]) // match[1] 是捕获组
+		}
+	}
+	return mentions
+}
+
 func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
 	lSourceGroup := strings.Split(sourceGroup, "/")
 	owner, repo := lSourceGroup[0], lSourceGroup[1]
@@ -142,6 +156,18 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 	switch giteeType {
 	case "pr", "push", "issue":
 		return allAdmins
+	case "note":
+		if noteEvent, ok := (*raw)["NoteEvent"].(map[string]interface{}); ok {
+			if note, ok := noteEvent["Note"].(string); ok {
+				return extractMentions(note)
+			} else {
+				logrus.Error("Note does not exist or is not a string")
+				return []string{}
+			}
+		} else {
+			logrus.Error("NoteEvent does not exist or is not a map")
+			return []string{}
+		}
 	default:
 		return []string{}
 	}
