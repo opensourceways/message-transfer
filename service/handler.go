@@ -37,9 +37,9 @@ func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	return nil
 }
 
-func handleNote(raw dto.Raw, giteeNote dto.GiteeNoteRaw, cfg kafka.ConsumeConfig) error {
+func handleNote(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	time.Sleep(utils.GetConsumeSleepTime())
-	event := raw.NoteToCloudEventByConfig(cfg.Topic, giteeNote)
+	event := raw.ToCloudEventByConfig(cfg.Topic)
 	if event.ID() == "" {
 		return nil
 	}
@@ -193,7 +193,7 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	raw.SigMaintainers = sigMaintainers
 	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
-	return handleNote(rawMap, raw, config.GiteeConfigInstance.Note)
+	return handleNote(rawMap, config.GiteeConfigInstance.Note)
 }
 
 // EurBuildHandle handle eur build raw.
