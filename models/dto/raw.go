@@ -149,7 +149,6 @@ func (raw *Raw) GetNoteRelatedUsers(event *CloudEvents, noteRaw GiteeNoteRaw) {
 		if result, ok := event.Extensions()["relatedusers"].(string); ok {
 			lResult := strings.Split(result, ",")
 			noteUsers := extractMentions(*noteRaw.Note)
-			logrus.Infof("about user is %v", noteUsers)
 			lResult = append(lResult, noteUsers...)
 			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
 		}
@@ -187,8 +186,8 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 		logrus.SetFormatter(&logrus.JSONFormatter{
 			PrettyPrint: true, // 启用美化输出
 		})
-		a := (*raw)["NoteEvent"]
-		logrus.Infof("the data is %v type is %v", a, reflect.TypeOf(a))
+		a := (*raw)["NoteEvent"].(map[string]interface{})
+		logrus.Infof("the data is %v type is %v", a["Note"], reflect.TypeOf(a))
 		return []string{}
 	default:
 		return []string{}
