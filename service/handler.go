@@ -37,24 +37,6 @@ func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	return nil
 }
 
-func handleNote(raw dto.Raw, cfg kafka.ConsumeConfig) error {
-	time.Sleep(utils.GetConsumeSleepTime())
-	event := raw.ToCloudEventByConfig(cfg.Topic)
-	if event.ID() == "" {
-		return nil
-	}
-	err := event.SaveDb()
-	if err != nil {
-		logrus.Errorf("saveDb failed, err:%v", err)
-		return err
-	}
-	kafkaSendErr := kafka.SendMsg(cfg.Publish, &event)
-	if kafkaSendErr != nil {
-		return kafkaSendErr
-	}
-	return nil
-}
-
 // CVEHandle handle cve issue raw.
 func CVEHandle(payload []byte, _ map[string]string) error {
 	var raw dto.CVEIssueRaw
@@ -193,7 +175,7 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	raw.SigMaintainers = sigMaintainers
 	raw.RepoAdmins = repoAdmins
 	rawMap := dto.StructToMap(raw)
-	return handleNote(rawMap, config.GiteeConfigInstance.Note)
+	return handle(rawMap, config.GiteeConfigInstance.Note)
 }
 
 // EurBuildHandle handle eur build raw.
