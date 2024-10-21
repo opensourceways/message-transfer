@@ -215,6 +215,7 @@ func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 			},
 		}).Parse(tmpl)
 	if err != nil {
+		logrus.Infof("the field is %v, the template is %v", config.Field, config.Template)
 		logrus.Error(config.Field, err)
 	}
 	t := template.Must(parse, nil)
