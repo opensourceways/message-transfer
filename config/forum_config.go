@@ -25,6 +25,5 @@ func InitForumConfig(configFile string) {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
-	logrus.Infof("the forum config is %v", cfg)
 	ForumConfigInstance = *cfg
 }
