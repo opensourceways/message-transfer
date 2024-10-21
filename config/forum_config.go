@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CveConfigInstance cve config instance.
+// ForumConfigInstance cve config instance.
 var ForumConfigInstance ForumConfig
 
 // ForumConfig definition of cve config.
@@ -18,12 +18,13 @@ type ForumConfig struct {
 	Kafka kafka.ConsumeConfig `yaml:"kafka"`
 }
 
-// InitCVEConfig init cve config.
+// InitForumConfig init cve config.
 func InitForumConfig(configFile string) {
 	cfg := new(ForumConfig)
 	if err := utils.LoadFromYaml(configFile, cfg); err != nil {
 		logrus.Error("Config初始化失败, err:", err)
 		return
 	}
+	logrus.Infof("the forum config is %v", cfg)
 	ForumConfigInstance = *cfg
 }
