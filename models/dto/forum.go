@@ -14,7 +14,6 @@ type Forum struct {
 type Notification struct {
 	ID           int              `json:"id"`
 	UserID       int              `json:"user_id"`
-	UserName     int              `json:"user_name"`
 	Type         int              `json:"notification_type"`
 	Read         bool             `json:"read"`
 	HighPriority bool             `json:"high_priority"`
