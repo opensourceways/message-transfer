@@ -218,5 +218,6 @@ func ForumHandle(payload []byte, _ map[string]string) error {
 		return msgBodyErr
 	}
 	rawMap := dto.StructToMap(raw)
+	logrus.Infof("the raw is %v", rawMap)
 	return handle(rawMap, config.ForumConfigInstance.Kafka)
 }

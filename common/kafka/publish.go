@@ -9,8 +9,6 @@ import (
 	"fmt"
 
 	kfklib "github.com/opensourceways/kafka-lib/agent"
-	"github.com/sirupsen/logrus"
-
 	"github.com/opensourceways/message-transfer/models/message"
 )
 
@@ -18,7 +16,6 @@ import (
 // and sends it to the ModelCreate topic.
 func SendMsg(topic string, e message.EventMessage) error {
 	res := send(topic, e)
-	logrus.Info("send to kafka success topic = " + topic)
 	return res
 }
 
