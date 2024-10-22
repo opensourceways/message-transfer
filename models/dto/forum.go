@@ -12,17 +12,18 @@ type Forum struct {
 
 // Notification 表示单个通知信息
 type Notification struct {
-	ID           int              `json:"id"`
-	UserID       int              `json:"user_id"`
-	Type         int              `json:"notification_type"`
-	Read         bool             `json:"read"`
-	HighPriority bool             `json:"high_priority"`
-	CreatedAt    time.Time        `json:"created_at"`
-	PostNumber   *int             `json:"post_number,omitempty"`
-	TopicID      *int             `json:"topic_id,omitempty"`
-	Slug         *string          `json:"slug,omitempty"`
-	FancyTitle   *string          `json:"fancy_title,omitempty"`
-	Data         NotificationData `json:"data"`
+	ID              int              `json:"id"`
+	UserID          int              `json:"user_id"`
+	Type            int              `json:"notification_type"`
+	Read            bool             `json:"read"`
+	HighPriority    bool             `json:"high_priority"`
+	CreatedAt       time.Time        `json:"created_at"`
+	PostNumber      *int             `json:"post_number,omitempty"`
+	TopicID         *int             `json:"topic_id,omitempty"`
+	Slug            *string          `json:"slug,omitempty"`
+	FancyTitle      *string          `json:"fancy_title,omitempty"`
+	Data            NotificationData `json:"data"`
+	ReceiveUserName string           `json:"receive_user_name"`
 }
 
 // NotificationData 包含通知的具体数据

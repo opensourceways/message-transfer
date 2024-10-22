@@ -16,6 +16,7 @@ type Config struct {
 	EulerRepoSigUrl      string `json:"euler_repo_sig_url"`
 	EulerUserSigUrl      string `json:"euler_user_sig_url"`
 	QuerySigInfo         string `json:"query_sig_info"`
+	ForumUserUrl         string `json:"forum_user_url"`
 }
 
 var config Config
