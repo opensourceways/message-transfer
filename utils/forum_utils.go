@@ -17,7 +17,7 @@ type ForumUser struct {
 }
 
 func GetForumUserName(userId int) string {
-	url := fmt.Sprintf("https://forum.openeuler.org/user-cards.json?user_ids=%d", userId)
+	url := fmt.Sprintf("https://discourse.test.osinfra.cn/user-cards.json?user_ids=%d", userId)
 
 	client := &http.Client{}
 
