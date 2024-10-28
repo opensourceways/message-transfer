@@ -40,7 +40,7 @@ func (event CloudEvents) SaveDb() error {
 	eventDO := event.toCloudEventDO()
 	result := postgresql.DB().Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "event_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"event_id", "source_url", "source_group",
+		DoUpdates: clause.AssignmentColumns([]string{"recipient_id", "source_url", "source_group",
 			"summary", "data_schema", "data_content_type", "spec_version", "time", "user",
 			"data_json", "title", "related_users", "mail_title", "mail_summary"}),
 	}).Create(&eventDO)

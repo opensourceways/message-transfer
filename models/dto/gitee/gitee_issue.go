@@ -33,6 +33,8 @@ func (raw *GiteeIssueRaw) GetFollowUsers(events dto.CloudEvents) {
 
 func (raw *GiteeIssueRaw) GetTodoUsers(events dto.CloudEvents) {
 	todoUsers := []string{}
+	done := false
 	//todo
 	events.SetExtension("todoUsers", todoUsers)
+	events.SetExtension("todoUsers", done)
 }
