@@ -7,7 +7,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 	"time"
 
@@ -19,7 +18,7 @@ import (
 	"github.com/opensourceways/message-transfer/utils"
 )
 
-func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
+func handle(raw dto.RawMap, cfg kafka.ConsumeConfig) error {
 	time.Sleep(utils.GetConsumeSleepTime())
 	event := raw.ToCloudEventByConfig(cfg.Topic)
 	if event.ID() == "" {
@@ -57,34 +56,6 @@ func CVEHandle(payload []byte, _ map[string]string) error {
 	raw.SigMaintainers = sigMaintainers
 	rawMap := raw.ToMap()
 	return handle(rawMap, config.CveConfigInstance.Kafka)
-}
-
-// GiteeIssueHandle handle gitee issue raw.
-func GiteeIssueHandle(payload []byte, _ map[string]string) error {
-	var raw dto.GiteeIssueRaw
-	msgBodyErr := json.Unmarshal(payload, &raw)
-	if msgBodyErr != nil {
-		return msgBodyErr
-	}
-	sigGroupName, err := utils.GetRepoSigInfo(raw.Repository.Name)
-	if err != nil {
-		return err
-	}
-	sigMaintainers, _, err := utils.GetMembersBySig(sigGroupName)
-	if err != nil {
-		return err
-	}
-	repo := strings.Split(raw.Repository.FullName, "/")
-	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
-	if err != nil {
-		return err
-	}
-
-	raw.SigGroupName = sigGroupName
-	raw.SigMaintainers = sigMaintainers
-	raw.RepoAdmins = repoAdmins
-	rawMap := dto.StructToMap(raw)
-	return handle(rawMap, config.GiteeConfigInstance.Issue)
 }
 
 // GiteePushHandle handle gitee push raw.
@@ -178,17 +149,17 @@ func GiteeNoteHandle(payload []byte, _ map[string]string) error {
 	return handle(rawMap, config.GiteeConfigInstance.Note)
 }
 
-// EurBuildHandle handle eur build raw.
-func EurBuildHandle(payload []byte, _ map[string]string) error {
-	var raw dto.EurBuildMessageRaw
-	msgBodyErr := json.Unmarshal(payload, &raw)
-	if msgBodyErr != nil {
-		return msgBodyErr
-	}
-	raw.SourceGroup = fmt.Sprintf("%s/%s", raw.Body.Owner, raw.Body.Copr)
-	rawMap := dto.StructToMap(raw)
-	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
-}
+//// EurBuildHandle handle eur build raw.
+//func EurBuildHandle(payload []byte, _ map[string]string) error {
+//	var raw dto.EurBuildMessageRaw
+//	msgBodyErr := json.Unmarshal(payload, &raw)
+//	if msgBodyErr != nil {
+//		return msgBodyErr
+//	}
+//	raw.SourceGroup = fmt.Sprintf("%s/%s", raw.Body.Owner, raw.Body.Copr)
+//	rawMap := dto.StructToMap(raw)
+//	return handle(rawMap, config.EurBuildConfigInstance.Kafka)
+//}
 
 // OpenEulerMeetingHandle handle openEuler meeting raw.
 func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {

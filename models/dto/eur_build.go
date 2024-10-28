@@ -29,3 +29,28 @@ type EurBuildMessageRaw struct {
 	Topic       string `json:"topic"`
 	SourceGroup string `json:"source_group"`
 }
+
+func (raw *EurBuildMessageRaw) ToCloudEventsByConfig() CloudEvents {
+	rawMap := StructToMap(raw)
+	return rawMap.ToCloudEventByConfig("gitee_issue_raw")
+}
+
+func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
+	releatedUsers := []string{}
+	//TODO implement me
+
+	//releatedUsers,_=utils.GetRepoSigInfo(raw.Repository.Name)
+	events.SetExtension("releatedusers", releatedUsers)
+}
+
+func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
+	followUsers := []string{}
+	//todo
+	events.SetExtension("followUsers", followUsers)
+}
+
+func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
+	todoUsers := []string{}
+	//todo
+	events.SetExtension("todoUsers", todoUsers)
+}

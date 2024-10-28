@@ -9,13 +9,13 @@ import (
 	"github.com/opensourceways/go-gitee/gitee"
 )
 
-// GiteeIssueRaw gitee issue raw.
-type GiteeIssueRaw struct {
-	gitee.IssueEvent
-	SigGroupName   string   `json:"sig_group_name"`
-	SigMaintainers []string `json:"sig_maintainers"`
-	RepoAdmins     []string `json:"repo_admins"`
-}
+/*
+GiteeIssueRaw
+*/
+
+/*
+GiteePushRaw
+*/
 
 // GiteePushRaw gitee push raw.
 type GiteePushRaw struct {

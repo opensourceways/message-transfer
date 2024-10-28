@@ -23,8 +23,8 @@ import (
 	"github.com/opensourceways/message-transfer/utils"
 )
 
-// Raw declare raw.
-type Raw map[string]interface{}
+// RawMap declare raw.
+type RawMap map[string]interface{}
 
 const (
 	giteeSource   = "https://gitee.com"
@@ -33,7 +33,7 @@ const (
 )
 
 // StructToMap struct to map.
-func StructToMap(obj interface{}) map[string]interface{} {
+func StructToMap(obj interface{}) RawMap {
 	objValue := reflect.ValueOf(obj)
 	objType := reflect.TypeOf(obj)
 
@@ -75,8 +75,7 @@ func StructToMap(obj interface{}) map[string]interface{} {
 	return result
 }
 
-// Flatten flatten func.
-func (raw *Raw) Flatten() map[string]interface{} {
+func (raw *RawMap) Flatten() map[string]interface{} {
 	s, err := json.Marshal(raw)
 	if err != nil {
 		logrus.Error(err)
@@ -97,7 +96,7 @@ func (raw *Raw) Flatten() map[string]interface{} {
 *
 读取数据库的配置，把原始消息转换成标准的cloudevents字段
 */
-func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
+func (raw *RawMap) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	newEvent := NewCloudEvents()
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
 	if configs != nil {
@@ -110,8 +109,26 @@ func (raw *Raw) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	return newEvent
 }
 
+func (raw *RawMap) GetUsers(event *CloudEvents) {
+	source := event.Source()
+	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
+		if result, ok := event.Extensions()["relatedusers"].(string); ok {
+			lResult := strings.Split(result, ",")
+
+			switch source {
+			case giteeSource, cveSource:
+				lResult = append(lResult, raw.getGiteeRelatedUsers(event, sourceGroup)...)
+			case meetingSource:
+				lResult = append(lResult, raw.getMeetingRelatedUsers(sourceGroup)...)
+			}
+
+			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
+		}
+	}
+}
+
 // GetRelateUsers get relate users.
-func (raw *Raw) GetRelateUsers(event *CloudEvents) {
+func (raw *RawMap) GetRelateUsers(event *CloudEvents) {
 	source := event.Source()
 	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
 		if result, ok := event.Extensions()["relatedusers"].(string); ok {
@@ -142,7 +159,7 @@ func extractMentions(note string) []string {
 	return mentions
 }
 
-func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
+func (raw *RawMap) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
 	lSourceGroup := strings.Split(sourceGroup, "/")
 	owner, repo := lSourceGroup[0], lSourceGroup[1]
 	giteeType := event.Type()
@@ -173,12 +190,12 @@ func (raw *Raw) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []s
 	}
 }
 
-func (raw *Raw) getMeetingRelatedUsers(sourceGroup string) []string {
+func (raw *RawMap) getMeetingRelatedUsers(sourceGroup string) []string {
 	maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
 	return append(maintainers, committers...)
 }
 
-func (raw *Raw) distinct(items []string) []string {
+func (raw *RawMap) distinct(items []string) []string {
 	resultList := stream.Of(items...).Distinct(func(item string) any { return item }).ToSlice()
 	var stringList []string
 	for _, str := range resultList {
@@ -206,7 +223,7 @@ func escapeCommas(s []string) []string {
 挨个字段做映射
 user,sourceurl,title,summary是扩展字段
 */
-func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
+func (raw *RawMap) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
 	parse, err := template.New("example").Funcs(
 		template.FuncMap{
