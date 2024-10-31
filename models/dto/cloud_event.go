@@ -55,7 +55,6 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	if event.Extensions()["sourcegroup"].(string) == "openeuler/infrastructure" {
 		logrus.Errorf("the saveDB result is %v", event.Extensions()["relatedusers"].(string))
 	}
-	logrus.Infof("the type is %v, the user is %v", event.Type(), event.Extensions()["user"])
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
