@@ -39,4 +39,7 @@ type NotificationData struct {
 	OriginalUsername *string `json:"original_username,omitempty"`
 	RevisionNumber   *int    `json:"revision_number,omitempty"`
 	DisplayUsername  *string `json:"display_username,omitempty"`
+	GroupID          *int    `json:"group_id,omitempty"`
+	GroupName        *string `json:"group_name,omitempty"`
+	InBoxCount       *int    `json:"inbox_count,omitempty"`
 }
