@@ -221,5 +221,6 @@ func ForumHandle(payload []byte, _ map[string]string) error {
 	receiveUser := utils.GetForumUserName(raw.UserID)
 	raw.ReceiveUserName = receiveUser
 	rawMap := dto.StructToMap(raw)
+	logrus.Infof("the data is %v", rawMap)
 	return handle(rawMap, config.ForumConfigInstance.Kafka)
 }
