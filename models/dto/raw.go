@@ -208,8 +208,9 @@ user,sourceurl,title,summary是扩展字段
 */
 func (raw *Raw) transferField(event *CloudEvents, config bo.TransferConfig) {
 	tmpl := config.Template
-	logrus.Infof("the field is %v, the templage is %v", config.Field, tmpl)
-
+	if config.Field == "summary" {
+		logrus.Infof("the template is %v", tmpl)
+	}
 	parse, err := template.New("example").Funcs(
 		template.FuncMap{
 			"escape": func(s string) string {
