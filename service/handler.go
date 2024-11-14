@@ -218,8 +218,7 @@ func ForumHandle(payload []byte, _ map[string]string) error {
 		return msgBodyErr
 	}
 
-	receiveUser := utils.GetForumUserName(raw.UserID)
-	raw.ReceiveUserName = receiveUser
+	raw.ReceiveUserName = raw.UserName
 	rawMap := dto.StructToMap(raw)
 	return handle(rawMap, config.ForumConfigInstance.Kafka)
 }
