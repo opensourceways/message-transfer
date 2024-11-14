@@ -60,7 +60,8 @@ func SubscribeCVERaw() {
 }
 
 func SubscribeForumRaw() {
-	logrus.Info("subscribing to forum topic")
+	logrus.Info("subscribing to forum topic %v, %v", config.ForumConfigInstance.Kafka.Topic,
+		config.ForumConfigInstance.Kafka.Group)
 	_ = kfklib.Subscribe(config.ForumConfigInstance.Kafka.Group, ForumHandle,
 		[]string{config.ForumConfigInstance.Kafka.Topic})
 }
