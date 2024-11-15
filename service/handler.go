@@ -213,6 +213,7 @@ func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 
 func ForumHandle(payload []byte, _ map[string]string) error {
 	var raw dto.Notification
+	logrus.Infof("receive forum msg")
 	msgBodyErr := json.Unmarshal(payload, &raw)
 	if msgBodyErr != nil {
 		return msgBodyErr
