@@ -22,6 +22,9 @@ import (
 func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	time.Sleep(utils.GetConsumeSleepTime())
 	event := raw.ToCloudEventByConfig(cfg.Topic)
+	if cfg.Topic == "forum_raw" {
+		logrus.Infof("the event id is %v", event.ID())
+	}
 	if event.ID() == "" {
 		return nil
 	}
@@ -220,6 +223,5 @@ func ForumHandle(payload []byte, _ map[string]string) error {
 
 	raw.ReceiveUserName = raw.UserName
 	rawMap := dto.StructToMap(raw)
-	logrus.Infof("receive forum message, the kafka is %v", config.ForumConfigInstance.Kafka.Publish)
 	return handle(rawMap, config.ForumConfigInstance.Kafka)
 }
