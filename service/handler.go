@@ -22,9 +22,6 @@ import (
 func handle(raw dto.Raw, cfg kafka.ConsumeConfig) error {
 	time.Sleep(utils.GetConsumeSleepTime())
 	event := raw.ToCloudEventByConfig(cfg.Topic)
-	if cfg.Topic == "forum_raw" {
-		logrus.Infof("the event id is %v", event.ID())
-	}
 	if event.ID() == "" {
 		return nil
 	}
