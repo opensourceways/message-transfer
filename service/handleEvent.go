@@ -3,11 +3,12 @@ package service
 import (
 	"encoding/json"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/config"
 	"github.com/opensourceways/message-transfer/models/dto"
 	"github.com/opensourceways/message-transfer/models/dto/gitee"
-	"github.com/sirupsen/logrus"
 )
 
 func handleEvent(rawEvent dto.RawEvent, cfg kafka.ConsumeConfig) error {

@@ -1,9 +1,10 @@
 package config
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/sirupsen/logrus"
 )
 
 // EurBuildConfigInstance eur build config instance.

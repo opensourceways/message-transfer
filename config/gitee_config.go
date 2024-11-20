@@ -5,9 +5,10 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 package config
 
 import (
+	"github.com/sirupsen/logrus"
+
 	"github.com/opensourceways/message-transfer/common/kafka"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/sirupsen/logrus"
 )
 
 // GiteeConfigInstance gitee config instance.

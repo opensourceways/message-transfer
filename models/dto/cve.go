@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
+
 	"github.com/opensourceways/message-transfer/utils"
 )
 

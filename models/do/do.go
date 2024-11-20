@@ -8,8 +8,9 @@ package do
 import (
 	"time"
 
-	"github.com/opensourceways/message-transfer/common/postgresql"
 	"gorm.io/datatypes"
+
+	"github.com/opensourceways/message-transfer/common/postgresql"
 )
 
 // MessageCloudEventDO message cloud event do.

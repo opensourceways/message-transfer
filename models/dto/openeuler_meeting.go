@@ -9,8 +9,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/opensourceways/message-transfer/utils"
 	"github.com/sirupsen/logrus"
+
+	"github.com/opensourceways/message-transfer/utils"
 )
 
 // OpenEulerMeetingRaw openEuler meeting raw.

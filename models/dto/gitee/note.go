@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
+
 	"github.com/opensourceways/message-transfer/models/dto"
 	"github.com/opensourceways/message-transfer/utils"
 )

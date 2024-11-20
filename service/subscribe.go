@@ -6,8 +6,9 @@ package service
 
 import (
 	kfklib "github.com/opensourceways/kafka-lib/agent"
-	"github.com/opensourceways/message-transfer/config"
 	"github.com/sirupsen/logrus"
+
+	"github.com/opensourceways/message-transfer/config"
 )
 
 // SubscribeEurRaw subscribe eur topic.
