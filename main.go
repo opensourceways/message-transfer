@@ -51,9 +51,6 @@ func main() {
 		service.SubscribeGiteeIssue()
 	}()
 	go func() {
-		service.SubscribeGiteePush()
-	}()
-	go func() {
 		service.SubscribeGiteePr()
 	}()
 	go func() {
@@ -94,6 +91,7 @@ func initTransferConfig(o options) {
 	config.InitEurBuildConfig(o.EurBuildConfig)
 	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
 	config.InitCVEConfig(o.CVEConfig)
+	config.InitForumConfig(o.ForumConfig)
 }
 
 /*
@@ -113,6 +111,7 @@ type options struct {
 	GiteeConfig            string
 	OpenEulerMeetingConfig string
 	CVEConfig              string
+	ForumConfig            string
 }
 
 // AddFlags add flags.
@@ -123,5 +122,5 @@ func (o *options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "",
 		"Path to meeting config file.")
 	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to cve config file.")
-
+	fs.StringVar(&o.ForumConfig, "forum-config-file", "", "Path to forum config file.")
 }
