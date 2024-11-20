@@ -7,19 +7,60 @@ package dto
 
 import (
 	"regexp"
+	"slices"
+	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
+	"github.com/opensourceways/message-transfer/utils"
 )
 
 // CVEIssueRaw cve issue raw.
 type CVEIssueRaw struct {
 	gitee.IssueEvent
-	SigGroupName   string   `json:"sig_group_name"`
-	SigMaintainers []string `json:"sig_maintainers"`
+}
+
+func (cveIssueRaw *CVEIssueRaw) ToCloudEventsByConfig() CloudEvents {
+	rawMap := cveIssueRaw.ToMap()
+	return rawMap.ToCloudEventByConfig("cve_issue_raw")
+}
+
+func (cveIssueRaw *CVEIssueRaw) GetRelateUsers(events CloudEvents) {
+	events.SetExtension("releatedusers", []string{})
+}
+
+func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
+	sigGroup, err := utils.GetRepoSigInfo(cveIssueRaw.Repository.Name)
+	if err != nil {
+		return
+	}
+	sigMaintainers, _, err := utils.GetMembersBySig(sigGroup)
+	if err != nil {
+		return
+	}
+
+	repo := strings.Split(cveIssueRaw.Repository.FullName, "/")
+	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
+	if err != nil {
+		return
+	}
+	followUsers := slices.Concat(sigMaintainers, repoAdmins)
+	followUsers = utils.Difference(followUsers, []string{cveIssueRaw.Issue.Assignee.UserName})
+	events.SetExtension("followusers", followUsers)
+}
+
+func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
+	todoUsers := []string{cveIssueRaw.Issue.Assignee.UserName}
+	events.SetExtension("todoUsers", todoUsers)
+	events.SetExtension("businessid", cveIssueRaw.Issue.Id)
+}
+
+func (cveIssueRaw *CVEIssueRaw) IsDone(events CloudEvents) {
+	events.SetExtension("isdone", slices.Contains([]string{"rejected", "closed"},
+		cveIssueRaw.Issue.State))
 }
 
 // ToMap transfer cve issue raw to map[string]interface{}.
-func (cveIssueRaw *CVEIssueRaw) ToMap() map[string]interface{} {
+func (cveIssueRaw *CVEIssueRaw) ToMap() RawMap {
 	cveMap := extractVariables(*cveIssueRaw.Description)
 	cveIssueMap := StructToMap(cveIssueRaw)
 	for s, i := range cveMap {

@@ -33,3 +33,22 @@ func EscapePgsqlValue(value string) string {
 	value = strings.ReplaceAll(value, `^`, `\^`)
 	return value
 }
+
+// Difference 函数返回 sliceA 中存在但 sliceB 中不存在的元素
+func Difference(sliceA, sliceB []string) []string {
+	// 创建一个映射，用于存储 sliceB 中的元素
+	setB := make(map[string]struct{})
+	for _, item := range sliceB {
+		setB[item] = struct{}{}
+	}
+
+	// 创建一个结果切片，用于存储差集
+	var difference []string
+	for _, item := range sliceA {
+		if _, found := setB[item]; !found {
+			difference = append(difference, item)
+		}
+	}
+
+	return difference
+}

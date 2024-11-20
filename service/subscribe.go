@@ -24,13 +24,6 @@ func SubscribeGiteeIssue() {
 		[]string{config.GiteeConfigInstance.Issue.Topic})
 }
 
-// SubscribeGiteePush subscribe gitee push topic.
-func SubscribeGiteePush() {
-	logrus.Info("subscribing to push topic")
-	_ = kfklib.Subscribe(config.GiteeConfigInstance.Push.Group, GiteePushHandle,
-		[]string{config.GiteeConfigInstance.Push.Topic})
-}
-
 // SubscribeGiteePr subscribe gitee pullRequest topic.
 func SubscribeGiteePr() {
 	logrus.Info("subscribing to pr topic")
@@ -57,4 +50,11 @@ func SubscribeCVERaw() {
 	logrus.Info("subscribing to cve topic")
 	_ = kfklib.Subscribe(config.CveConfigInstance.Kafka.Group, CVEHandle,
 		[]string{config.CveConfigInstance.Kafka.Topic})
+}
+
+// SubscribeForumRaw subscribe forum topic.
+func SubscribeForumRaw() {
+	logrus.Info("subscribing to openEuler forum topic")
+	_ = kfklib.Subscribe(config.ForumConfigInstance.Kafka.Group, OpenEulerForumHandle,
+		[]string{config.ForumConfigInstance.Kafka.Topic})
 }

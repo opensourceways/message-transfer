@@ -5,7 +5,13 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 // Package dto models dto of meeting
 package dto
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	"github.com/opensourceways/message-transfer/utils"
+	"github.com/sirupsen/logrus"
+)
 
 // OpenEulerMeetingRaw openEuler meeting raw.
 type OpenEulerMeetingRaw struct {
@@ -34,8 +40,51 @@ type OpenEulerMeetingRaw struct {
 		Group     int    `json:"group"`
 		Mplatform string `json:"mplatform"`
 	} `json:"msg"`
-	MeetingStartTime string    `json:"meeting_start_time"`
-	MeetingEndTime   string    `json:"meeting_end_time"`
-	SigMaintainers   []string  `json:"sig_maintainers"`
-	Time             time.Time `json:"time"`
+}
+
+func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
+	events.SetExtension("releatedusers", []string{})
+}
+
+func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
+	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
+	if err != nil {
+		logrus.Errorf("get members by sig failed, err:%v", err)
+		events.SetExtension("todousers", []string{})
+		return
+	}
+	events.SetExtension("todousers", sigMaintainers)
+	events.SetExtension("businessid", raw.Msg.Id)
+}
+
+func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
+	events.SetExtension("followusers", []string{})
+}
+
+func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig() CloudEvents {
+	rawMap := StructToMap(raw)
+	return rawMap.ToCloudEventByConfig("openEuler_meeting_raw")
+}
+
+func (raw OpenEulerMeetingRaw) IsDone(events CloudEvents) {
+
+	if raw.Action == "delete_meeting" {
+		events.SetExtension("isdone", true)
+		return
+	}
+	layout := "2006-01-0215:04"
+
+	meetingEndTime, err := time.Parse(layout, raw.Msg.Date+raw.Msg.End)
+	if err != nil {
+		fmt.Println("Error parsing end time:", err)
+		return
+	}
+
+	// 获取当前时间
+	currentTime := time.Now()
+
+	// 判断当前时间是否过期
+	if currentTime.After(meetingEndTime) {
+		events.SetExtension("isdone", true)
+	}
 }

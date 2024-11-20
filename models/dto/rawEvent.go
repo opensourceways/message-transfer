@@ -5,5 +5,5 @@ type RawEvent interface {
 	GetTodoUsers(CloudEvents)
 	GetFollowUsers(CloudEvents)
 	ToCloudEventsByConfig() CloudEvents
-	//FUNC()
+	IsDone(events CloudEvents)
 }

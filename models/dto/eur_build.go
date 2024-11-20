@@ -32,25 +32,22 @@ type EurBuildMessageRaw struct {
 
 func (raw *EurBuildMessageRaw) ToCloudEventsByConfig() CloudEvents {
 	rawMap := StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("gitee_issue_raw")
+	return rawMap.ToCloudEventByConfig("eur_build_raw")
 }
 
 func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
-	releatedUsers := []string{}
-	//TODO implement me
-
-	//releatedUsers,_=utils.GetRepoSigInfo(raw.Repository.Name)
-	events.SetExtension("releatedusers", releatedUsers)
+	events.SetExtension("releatedusers", []string{})
 }
 
 func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
-	followUsers := []string{}
-	//todo
-	events.SetExtension("followUsers", followUsers)
+	followUsers := []string{raw.Body.User, raw.Body.Owner}
+	events.SetExtension("followusers", followUsers)
 }
 
 func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
-	todoUsers := []string{}
-	//todo
-	events.SetExtension("todoUsers", todoUsers)
+	events.SetExtension("todoUsers", []string{})
+}
+
+func (raw *EurBuildMessageRaw) IsDone(events CloudEvents) {
+	events.SetExtension("isdone", false)
 }
