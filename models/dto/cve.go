@@ -26,7 +26,7 @@ func (cveIssueRaw *CVEIssueRaw) ToCloudEventsByConfig() CloudEvents {
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("releatedusers", []string{})
+	events.SetExtension("releatedUsers", []string{})
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
@@ -46,7 +46,7 @@ func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
 	followUsers = utils.Difference(followUsers, []string{cveIssueRaw.Issue.Assignee.UserName})
-	events.SetExtension("followusers", followUsers)
+	events.SetExtension("followUsers", followUsers)
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
