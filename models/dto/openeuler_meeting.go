@@ -44,7 +44,7 @@ type OpenEulerMeetingRaw struct {
 }
 
 func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("releatedUsers", []string{})
+	events.SetExtension("relatedusers", []string{})
 }
 
 func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {

@@ -26,7 +26,7 @@ func (cveIssueRaw *CVEIssueRaw) ToCloudEventsByConfig() CloudEvents {
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("releatedUsers", []string{})
+	events.SetExtension("relatedusers", []string{})
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {

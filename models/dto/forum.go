@@ -63,7 +63,7 @@ func (raw *Notification) GetRelateUsers(events CloudEvents) {
 		return
 	}
 
-	events.SetExtension("releatedUsers", []string{raw.UserName})
+	events.SetExtension("relatedusers", []string{raw.UserName})
 }
 
 func (raw *Notification) GetTodoUsers(events CloudEvents) {

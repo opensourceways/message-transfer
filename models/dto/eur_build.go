@@ -36,7 +36,7 @@ func (raw *EurBuildMessageRaw) ToCloudEventsByConfig() CloudEvents {
 }
 
 func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("releatedUsers", []string{})
+	events.SetExtension("relatedusers", []string{})
 }
 
 func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {

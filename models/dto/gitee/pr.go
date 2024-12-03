@@ -21,7 +21,7 @@ func (raw *PrRaw) ToCloudEventsByConfig() dto.CloudEvents {
 }
 
 func (raw *PrRaw) GetRelateUsers(events dto.CloudEvents) {
-	events.SetExtension("releatedUsers", []string{})
+	events.SetExtension("relatedusers", []string{})
 }
 
 func (raw *PrRaw) GetFollowUsers(events dto.CloudEvents) {
