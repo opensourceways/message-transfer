@@ -38,7 +38,7 @@ func GetMentionedUsers(raw *NoteRaw) []string {
 }
 
 func GetOwner(raw *NoteRaw) string {
-	logrus.Infof(*raw.NoteableType, raw.Issue, raw.PullRequest, raw.Issue.User, raw.PullRequest.User)
+	logrus.Infof(*raw.NoteableType, raw.Issue, raw.PullRequest)
 	if *raw.NoteableType == "PullRequest" {
 		if raw.PullRequest == nil || raw.PullRequest.User == nil {
 			return ""
