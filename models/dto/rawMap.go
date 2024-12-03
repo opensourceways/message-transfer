@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"reflect"
-	"regexp"
 	"strings"
 	"text/template"
 	"time"
@@ -25,12 +24,6 @@ import (
 
 // RawMap declare raw.
 type RawMap map[string]interface{}
-
-const (
-	giteeSource   = "https://gitee.com"
-	meetingSource = "https://www.openEuler.org/meeting"
-	cveSource     = "cve"
-)
 
 // StructToMap struct to map.
 func StructToMap(obj interface{}) RawMap {
@@ -103,91 +96,9 @@ func (raw *RawMap) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		for _, config := range configs {
 			raw.transferField(&newEvent, config)
 		}
-		raw.GetRelateUsers(&newEvent)
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
-}
-
-func (raw *RawMap) GetUsers(event *CloudEvents) {
-	source := event.Source()
-	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
-		if result, ok := event.Extensions()["relatedusers"].(string); ok {
-			lResult := strings.Split(result, ",")
-
-			switch source {
-			case giteeSource, cveSource:
-				lResult = append(lResult, raw.getGiteeRelatedUsers(event, sourceGroup)...)
-			case meetingSource:
-				lResult = append(lResult, raw.getMeetingRelatedUsers(sourceGroup)...)
-			}
-
-			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
-		}
-	}
-}
-
-// GetRelateUsers get relate users.
-func (raw *RawMap) GetRelateUsers(event *CloudEvents) {
-	source := event.Source()
-	if sourceGroup, ok := event.Extensions()["sourcegroup"].(string); ok {
-		if result, ok := event.Extensions()["relatedusers"].(string); ok {
-			lResult := strings.Split(result, ",")
-
-			switch source {
-			case giteeSource, cveSource:
-				lResult = append(lResult, raw.getGiteeRelatedUsers(event, sourceGroup)...)
-			case meetingSource:
-				lResult = append(lResult, raw.getMeetingRelatedUsers(sourceGroup)...)
-			}
-
-			event.SetExtension("relatedusers", strings.Join(escapeCommas(raw.distinct(lResult)), ","))
-		}
-	}
-}
-
-func extractMentions(note string) []string {
-	re := regexp.MustCompile(`@([a-zA-Z0-9_-]+)`)
-	matches := re.FindAllStringSubmatch(note, -1)
-
-	var mentions []string
-	for _, match := range matches {
-		if len(match) > 1 {
-			mentions = append(mentions, match[1]) // match[1] 是捕获组
-		}
-	}
-	return mentions
-}
-
-func (raw *RawMap) getGiteeRelatedUsers(event *CloudEvents, sourceGroup string) []string {
-	lSourceGroup := strings.Split(sourceGroup, "/")
-	owner, repo := lSourceGroup[0], lSourceGroup[1]
-	giteeType := event.Type()
-
-	allAdmins, err := utils.GetAllAdmins(owner, repo)
-	if err != nil {
-		logrus.Errorf("get admins failed, err:%v", err)
-		return []string{}
-	}
-
-	switch giteeType {
-	case "pr", "push", "issue":
-		return allAdmins
-	case "note":
-		if noteEvent, ok := (*raw)["NoteEvent"].(map[string]interface{}); ok {
-			if note, ok := noteEvent["Note"].(string); ok {
-				return extractMentions(note)
-			} else {
-				logrus.Error("Note does not exist or is not a string")
-				return []string{}
-			}
-		} else {
-			logrus.Error("NoteEvent does not exist or is not a map")
-			return []string{}
-		}
-	default:
-		return []string{}
-	}
 }
 
 func (raw *RawMap) getMeetingRelatedUsers(sourceGroup string) []string {
@@ -204,18 +115,6 @@ func (raw *RawMap) distinct(items []string) []string {
 		}
 	}
 	return stringList
-}
-
-func escapeCommas(s []string) []string {
-	var result []string
-	for _, item := range s {
-		if strings.HasPrefix(item, ",") {
-			result = append(result, `\\`+item)
-		} else {
-			result = append(result, item)
-		}
-	}
-	return result
 }
 
 /*

@@ -40,9 +40,10 @@ func (event CloudEvents) SaveDb() error {
 	eventDO := event.toCloudEventDO()
 	result := postgresql.DB().Clauses(clause.OnConflict{
 		Columns: []clause.Column{{Name: "event_id"}},
-		DoUpdates: clause.AssignmentColumns([]string{"recipient_id", "source_url", "source_group",
+		DoUpdates: clause.AssignmentColumns([]string{"source_url", "source_group",
 			"summary", "data_schema", "data_content_type", "spec_version", "time", "user",
-			"data_json", "title", "related_users", "mail_title", "mail_summary"}),
+			"data_json", "title", "related_users", "todo_users", "follow_users",
+			"business_id", "mail_title", "mail_summary"}),
 	}).Create(&eventDO)
 	if result.Error != nil {
 		return xerrors.Errorf("save DB failed, the err: %v", result.Error)
@@ -52,8 +53,17 @@ func (event CloudEvents) SaveDb() error {
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
-	if event.Extensions()["sourcegroup"].(string) == "openeuler/infrastructure" {
-		logrus.Errorf("the saveDB result is %v", event.Extensions()["relatedusers"].(string))
+	todoUsers, ok := event.Extensions()["todoUsers"].(string)
+	if !ok || todoUsers == "" {
+		todoUsers = "{}" // 或者设置为其他默认值
+	} else {
+		todoUsers = "{" + todoUsers + "}"
+	}
+	followUsers, ok := event.Extensions()["followUsers"].(string)
+	if !ok || followUsers == "" {
+		followUsers = "{}" // 或者设置为其他默认值
+	} else {
+		followUsers = "{" + followUsers + "}"
 	}
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
@@ -72,6 +82,8 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		RelatedUsers:    "{" + event.Extensions()["relatedusers"].(string) + "}",
 		MailTitle:       event.Extensions()["mailtitle"].(string),
 		MailSummary:     event.Extensions()["mailsummary"].(string),
+		TodoUsers:       todoUsers,
+		FollowUsers:     followUsers,
 	}
 	return messageCloudEventDO
 }

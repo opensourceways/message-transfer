@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
+	"github.com/sirupsen/logrus"
 
 	"github.com/opensourceways/message-transfer/models/dto"
 	"github.com/opensourceways/message-transfer/utils"
@@ -37,9 +38,16 @@ func GetMentionedUsers(raw *NoteRaw) []string {
 }
 
 func GetOwner(raw *NoteRaw) string {
+	logrus.Infof(*raw.NoteableType, raw.Issue, raw.PullRequest, raw.Issue.User, raw.PullRequest.User)
 	if *raw.NoteableType == "PullRequest" {
+		if raw.PullRequest == nil || raw.PullRequest.User == nil {
+			return ""
+		}
 		return raw.PullRequest.User.UserName
 	} else {
+		if raw.Issue == nil || raw.Issue.User == nil {
+			return ""
+		}
 		return raw.Issue.User.UserName
 	}
 }

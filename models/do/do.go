@@ -32,6 +32,8 @@ type MessageCloudEventDO struct {
 	RelatedUsers    string         `gorm:"column:related_users"`
 	MailTitle       string         `gorm:"column:mail_title"`
 	MailSummary     string         `gorm:"column:mail_summary"`
+	TodoUsers       string         `gorm:"column:todo_users"`
+	FollowUsers     string         `gorm:"column:follow_users"`
 }
 
 // TableName get cloud event table name.
