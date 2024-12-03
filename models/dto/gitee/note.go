@@ -72,10 +72,13 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	mentionAndOwner := append(mention, owner)
+	logrus.Infof("isbot : %v", IsBot(raw))
 	if IsBot(raw) {
 		events.SetExtension("followusers", mentionAndOwner)
+		logrus.Infof("1111 followusers: %v", events.Extensions()["followusers"])
 	} else {
 		events.SetExtension("followusers", utils.Difference(repoAdmins, mentionAndOwner))
+		logrus.Infof("2222 followusers: %v", events.Extensions()["followusers"])
 	}
 }
 
