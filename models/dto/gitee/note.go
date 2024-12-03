@@ -17,8 +17,9 @@ type NoteRaw struct {
 }
 
 func IsBot(raw *NoteRaw) bool {
-	sendUser := raw.Sender.Login
+	sendUser := (*raw.Sender).Login
 	botNames := []string{"ci-robot", "openeuler-ci-bot", "openeuler-sync-bot"}
+	logrus.Infof("senduser: %v", sendUser)
 	return slices.Contains(botNames, sendUser)
 }
 
@@ -72,11 +73,9 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 	}
 	mentionAndOwner := append(mention, owner)
 	if IsBot(raw) {
-		events.Extensions()["followusers"] = mentionAndOwner
-		logrus.Infof("111   the follow users is %v", events.Extensions()["followusers"])
+		events.SetExtension("followusers", mentionAndOwner)
 	} else {
-		events.Extensions()["followusers"] = utils.Difference(repoAdmins, mentionAndOwner)
-		logrus.Infof("222   the follow users is %v", events.Extensions()["followusers"])
+		events.SetExtension("followusers", utils.Difference(repoAdmins, mentionAndOwner))
 	}
 }
 
