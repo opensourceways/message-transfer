@@ -40,7 +40,7 @@ func (raw *IssueRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
-	events.SetExtension("followUsers", followUsers)
+	events.SetExtension("followusers", followUsers)
 }
 
 func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
@@ -49,7 +49,7 @@ func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 		todoUsers = []string{raw.Issue.Assignee.UserName}
 		logrus.Infof("the todo users is %v", todoUsers)
 	}
-	events.SetExtension("todoUsers", todoUsers)
+	events.SetExtension("todousers", todoUsers)
 	events.SetExtension("businessid", raw.Issue.Id)
 	logrus.Infof("the assignee is %v, the id is %v", raw.Issue.Assignee, raw.Issue.Id)
 }

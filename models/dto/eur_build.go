@@ -41,11 +41,11 @@ func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
 
 func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
 	followUsers := []string{raw.Body.User, raw.Body.Owner}
-	events.SetExtension("followUsers", followUsers)
+	events.SetExtension("followusers", followUsers)
 }
 
 func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
-	events.SetExtension("todoUsers", []string{})
+	events.SetExtension("todousers", []string{})
 }
 
 func (raw *EurBuildMessageRaw) IsDone(events CloudEvents) {

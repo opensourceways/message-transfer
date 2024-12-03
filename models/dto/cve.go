@@ -50,7 +50,7 @@ func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
 		assignee = []string{cveIssueRaw.Issue.Assignee.UserName}
 	}
 	followUsers = utils.Difference(followUsers, assignee)
-	events.SetExtension("followUsers", followUsers)
+	events.SetExtension("followusers", followUsers)
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
@@ -60,7 +60,7 @@ func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
 	} else {
 		todoUsers = []string{}
 	}
-	events.SetExtension("todoUsers", todoUsers)
+	events.SetExtension("todousers", todoUsers)
 	events.SetExtension("businessid", cveIssueRaw.Issue.Id)
 }
 

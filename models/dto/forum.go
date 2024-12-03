@@ -67,12 +67,12 @@ func (raw *Notification) GetRelateUsers(events CloudEvents) {
 }
 
 func (raw *Notification) GetTodoUsers(events CloudEvents) {
-	events.SetExtension("todoUsers", []string{})
+	events.SetExtension("todousers", []string{})
 }
 
 func (raw *Notification) GetFollowUsers(events CloudEvents) {
 	if raw.isSystemMessage() || raw.isSystemAboutMessage() {
-		events.SetExtension("followUsers", []string{raw.UserName})
+		events.SetExtension("followusers", []string{raw.UserName})
 	}
 }
 

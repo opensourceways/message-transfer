@@ -53,19 +53,20 @@ func (event CloudEvents) SaveDb() error {
 }
 
 func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
-	todoUsers, ok := event.Extensions()["todoUsers"].(string)
+	todoUsers, ok := event.Extensions()["todousers"].(string)
 	if !ok || todoUsers == "" {
 		todoUsers = "{}" // 或者设置为其他默认值
 	} else {
 		todoUsers = "{" + todoUsers + "}"
 	}
-	followUsers, ok := event.Extensions()["followUsers"].(string)
+	followUsers, ok := event.Extensions()["followusers"].(string)
 	if !ok || followUsers == "" {
 		followUsers = "{}" // 或者设置为其他默认值
 	} else {
 		followUsers = "{" + followUsers + "}"
 	}
-	logrus.Infof("todoUsers: %v, followUsers: %v, extensions: %v", todoUsers, followUsers, event.Extensions())
+	logrus.Infof("todousers: %v, followusers: %v, extensions: %v", todoUsers, followUsers,
+		event.Extensions())
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),

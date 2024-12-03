@@ -59,7 +59,7 @@ func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 }
 
 func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
-	events.SetExtension("followUsers", []string{})
+	events.SetExtension("followusers", []string{})
 }
 
 func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig() CloudEvents {
