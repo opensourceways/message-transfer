@@ -41,7 +41,6 @@ func GetOwner(raw *NoteRaw) string {
 		if raw.PullRequest == nil || raw.PullRequest.User == nil {
 			return ""
 		}
-		logrus.Infof(raw.PullRequest.User.UserName, "11111", (*raw.PullRequest.User).UserName)
 		return (*raw.PullRequest.User).UserName
 	} else {
 		if raw.Issue == nil || raw.Issue.User == nil {
@@ -71,8 +70,8 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 	if err != nil {
 		return
 	}
-	logrus.Infof("repoAdmins: %v\n, mention: %v\n, owner: %v\n", repoAdmins, mention, owner)
 	mentionAndOwner := append(mention, owner)
+	logrus.Infof("mentionAndOwner: %v, difference is %v", mentionAndOwner, utils.Difference(repoAdmins, mentionAndOwner))
 	if IsBot(raw) {
 		events.SetExtension("followUsers", mentionAndOwner)
 	} else {
