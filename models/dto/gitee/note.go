@@ -19,7 +19,7 @@ type NoteRaw struct {
 func IsBot(raw *NoteRaw) bool {
 	sendUser := (*raw.Sender).Login
 	botNames := []string{"ci-robot", "openeuler-ci-bot", "openeuler-sync-bot"}
-	logrus.Infof("senduser: %v", sendUser)
+	logrus.Infof("isbot: %v", slices.Contains(botNames, sendUser))
 	return slices.Contains(botNames, sendUser)
 }
 
