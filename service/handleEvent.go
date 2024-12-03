@@ -13,7 +13,6 @@ import (
 
 func handleEvent(rawEvent dto.RawEvent, cfg kafka.ConsumeConfig) error {
 	event := rawEvent.ToCloudEventsByConfig()
-	logrus.Infof("the event id is %v", event.ID())
 	if event.ID() == "" {
 		return nil
 	}
