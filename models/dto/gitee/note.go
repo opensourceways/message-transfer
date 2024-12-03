@@ -41,7 +41,7 @@ func GetOwner(raw *NoteRaw) string {
 		if raw.PullRequest == nil || raw.PullRequest.User == nil {
 			return ""
 		}
-		logrus.Infof(raw.PullRequest.User.UserName, (*raw.PullRequest.User).UserName)
+		logrus.Infof(raw.PullRequest.User.UserName, "11111", (*raw.PullRequest.User).UserName)
 		return (*raw.PullRequest.User).UserName
 	} else {
 		if raw.Issue == nil || raw.Issue.User == nil {
