@@ -5,8 +5,6 @@ import (
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
-	"github.com/sirupsen/logrus"
-
 	"github.com/opensourceways/message-transfer/models/dto"
 	"github.com/opensourceways/message-transfer/utils"
 )
@@ -46,12 +44,10 @@ func (raw *IssueRaw) GetFollowUsers(events dto.CloudEvents) {
 func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 	var todoUsers []string
 	if raw.Issue.Assignee != nil {
-		todoUsers = []string{raw.Issue.Assignee.UserName}
-		logrus.Infof("the todo users is %v", todoUsers)
+		todoUsers = []string{(*raw.Issue.Assignee).UserName}
 	}
 	events.SetExtension("todousers", todoUsers)
-	events.SetExtension("businessid", raw.Issue.Id)
-	logrus.Infof("the assignee is %v, the id is %v", raw.Issue.Assignee, raw.Issue.Id)
+	events.SetExtension("businessid", (*raw.Issue).Id)
 }
 
 func (raw *IssueRaw) IsDone(events dto.CloudEvents) {
