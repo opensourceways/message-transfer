@@ -71,7 +71,7 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 	if err != nil {
 		return
 	}
-
+	logrus.Infof("repoAdmins: %v\n, mention: %v\n, owner: %v\n", repoAdmins, mention, owner)
 	mentionAndOwner := append(mention, owner)
 	if IsBot(raw) {
 		events.SetExtension("followUsers", mentionAndOwner)
