@@ -65,8 +65,6 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	} else {
 		followUsers = "{" + followUsers + "}"
 	}
-	logrus.Infof("todousers: %v, followusers: %v, extensions: %v", todoUsers, followUsers,
-		event.Extensions())
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
