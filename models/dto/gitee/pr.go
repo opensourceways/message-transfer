@@ -54,7 +54,7 @@ func (raw *PrRaw) getTodoUsers() []string {
 
 func (raw *PrRaw) GetTodoUsers(events dto.CloudEvents) {
 	events.SetExtension("todousers", strings.Join(raw.getTodoUsers(), ","))
-	events.SetExtension("businessid", raw.PullRequest.Id)
+	events.SetExtension("businessid", string(raw.PullRequest.Id))
 }
 
 func (raw *PrRaw) IsDone(events dto.CloudEvents) {

@@ -7,6 +7,7 @@ package dto
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -56,7 +57,7 @@ func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 		return
 	}
 	events.SetExtension("todousers", strings.Join(sigMaintainers, ","))
-	events.SetExtension("businessid", raw.Msg.Id)
+	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
 
 func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {

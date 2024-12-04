@@ -61,7 +61,7 @@ func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
 		todoUsers = []string{}
 	}
 	events.SetExtension("todousers", strings.Join(todoUsers, ","))
-	events.SetExtension("businessid", cveIssueRaw.Issue.Id)
+	events.SetExtension("businessid", string(cveIssueRaw.Issue.Id))
 }
 
 func (cveIssueRaw *CVEIssueRaw) IsDone(events CloudEvents) {

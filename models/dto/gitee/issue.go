@@ -47,7 +47,7 @@ func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 		todoUsers = []string{(*raw.Issue.Assignee).UserName}
 	}
 	events.SetExtension("todousers", strings.Join(todoUsers, ","))
-	events.SetExtension("businessid", (*raw.Issue).Id)
+	events.SetExtension("businessid", string(raw.Issue.Id))
 }
 
 func (raw *IssueRaw) IsDone(events dto.CloudEvents) {

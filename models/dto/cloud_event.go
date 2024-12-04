@@ -65,6 +65,10 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	} else {
 		followUsers = "{" + followUsers + "}"
 	}
+	businessid, ok := event.Extensions()["businessid"].(string)
+	if !ok || businessid == "" {
+		businessid = "" // 或者设置为其他默认值
+	}
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
@@ -84,6 +88,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		MailSummary:     event.Extensions()["mailsummary"].(string),
 		TodoUsers:       todoUsers,
 		FollowUsers:     followUsers,
+		BusinessId:      businessid,
 	}
 	return messageCloudEventDO
 }
