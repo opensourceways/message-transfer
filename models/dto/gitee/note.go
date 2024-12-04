@@ -8,7 +8,6 @@ import (
 	"github.com/opensourceways/go-gitee/gitee"
 	"github.com/opensourceways/message-transfer/models/dto"
 	"github.com/opensourceways/message-transfer/utils"
-	"github.com/sirupsen/logrus"
 )
 
 // NoteRaw gitee note raw.
@@ -19,7 +18,6 @@ type NoteRaw struct {
 func IsBot(raw *NoteRaw) bool {
 	sendUser := (*raw.Sender).Login
 	botNames := []string{"ci-robot", "openeuler-ci-bot", "openeuler-sync-bot"}
-	logrus.Infof("isbot: %v", slices.Contains(botNames, sendUser))
 	return slices.Contains(botNames, sendUser)
 }
 
@@ -59,7 +57,7 @@ func (raw *NoteRaw) ToCloudEventsByConfig() dto.CloudEvents {
 func (raw *NoteRaw) GetRelateUsers(events dto.CloudEvents) {
 	if !IsBot(raw) {
 		mention, owner := GetMentionedUsers(raw), GetOwner(raw)
-		events.SetExtension("relatedusers", append(mention, owner))
+		events.SetExtension("relatedusers", strings.Join(append(mention, owner), ","))
 	}
 }
 
@@ -72,19 +70,16 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	mentionAndOwner := append(mention, owner)
-	logrus.Infof("isbot : %v", IsBot(raw))
 	if IsBot(raw) {
-		events.Extensions()["followusers"] = mentionAndOwner
-		logrus.Infof("mentionAndOwner is %v", mentionAndOwner)
-		logrus.Infof("1111 followusers: %v", events.Extensions()["followusers"])
+		events.SetExtension("followusers", strings.Join(mentionAndOwner, ","))
 	} else {
-		events.Extensions()["followusers"] = utils.Difference(repoAdmins, mentionAndOwner)
-		logrus.Infof("2222 followusers: %v", events.Extensions()["followusers"])
+		events.SetExtension("followusers", strings.Join(utils.Difference(repoAdmins,
+			mentionAndOwner), ","))
 	}
 }
 
 func (raw *NoteRaw) GetTodoUsers(events dto.CloudEvents) {
-	events.SetExtension("todousers", []string{})
+	events.SetExtension("todousers", "")
 }
 
 func (raw *NoteRaw) IsDone(events dto.CloudEvents) {

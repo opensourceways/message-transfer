@@ -5,6 +5,8 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 // Package dto models dto of eur build.
 package dto
 
+import "strings"
+
 // EurBuildMessageRaw eur build message raw.
 type EurBuildMessageRaw struct {
 	Body struct {
@@ -36,16 +38,16 @@ func (raw *EurBuildMessageRaw) ToCloudEventsByConfig() CloudEvents {
 }
 
 func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("relatedusers", []string{})
+	events.SetExtension("relatedusers", "")
 }
 
 func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
 	followUsers := []string{raw.Body.User, raw.Body.Owner}
-	events.SetExtension("followusers", followUsers)
+	events.SetExtension("followusers", strings.Join(followUsers, ","))
 }
 
 func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
-	events.SetExtension("todousers", []string{})
+	events.SetExtension("todousers", "")
 }
 
 func (raw *EurBuildMessageRaw) IsDone(events CloudEvents) {

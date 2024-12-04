@@ -21,7 +21,7 @@ func (raw *PrRaw) ToCloudEventsByConfig() dto.CloudEvents {
 }
 
 func (raw *PrRaw) GetRelateUsers(events dto.CloudEvents) {
-	events.SetExtension("relatedusers", []string{})
+	events.SetExtension("relatedusers", "")
 }
 
 func (raw *PrRaw) GetFollowUsers(events dto.CloudEvents) {
@@ -40,7 +40,8 @@ func (raw *PrRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
-	events.SetExtension("followusers", utils.Difference(followUsers, raw.getTodoUsers()))
+	events.SetExtension("followusers", strings.Join(utils.Difference(followUsers,
+		raw.getTodoUsers()), ","))
 }
 
 func (raw *PrRaw) getTodoUsers() []string {
@@ -52,7 +53,7 @@ func (raw *PrRaw) getTodoUsers() []string {
 }
 
 func (raw *PrRaw) GetTodoUsers(events dto.CloudEvents) {
-	events.SetExtension("todousers", raw.getTodoUsers())
+	events.SetExtension("todousers", strings.Join(raw.getTodoUsers(), ","))
 	events.SetExtension("businessid", raw.PullRequest.Id)
 }
 

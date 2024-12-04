@@ -19,7 +19,7 @@ func (raw *IssueRaw) ToCloudEventsByConfig() dto.CloudEvents {
 }
 
 func (raw *IssueRaw) GetRelateUsers(events dto.CloudEvents) {
-	events.SetExtension("relatedusers", []string{})
+	events.SetExtension("relatedusers", "")
 }
 
 func (raw *IssueRaw) GetFollowUsers(events dto.CloudEvents) {
@@ -38,7 +38,7 @@ func (raw *IssueRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
-	events.SetExtension("followusers", followUsers)
+	events.SetExtension("followusers", strings.Join(followUsers, ","))
 }
 
 func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
@@ -46,7 +46,7 @@ func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 	if raw.Issue.Assignee != nil {
 		todoUsers = []string{(*raw.Issue.Assignee).UserName}
 	}
-	events.SetExtension("todousers", todoUsers)
+	events.SetExtension("todousers", strings.Join(todoUsers, ","))
 	events.SetExtension("businessid", (*raw.Issue).Id)
 }
 

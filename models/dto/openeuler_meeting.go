@@ -7,6 +7,7 @@ package dto
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -44,22 +45,22 @@ type OpenEulerMeetingRaw struct {
 }
 
 func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
-	events.SetExtension("relatedusers", []string{})
+	events.SetExtension("relatedusers", "")
 }
 
 func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
-		events.SetExtension("todousers", []string{})
+		events.SetExtension("todousers", "")
 		return
 	}
-	events.SetExtension("todousers", sigMaintainers)
+	events.SetExtension("todousers", strings.Join(sigMaintainers, ","))
 	events.SetExtension("businessid", raw.Msg.Id)
 }
 
 func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
-	events.SetExtension("followusers", []string{})
+	events.SetExtension("followusers", "")
 }
 
 func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig() CloudEvents {
