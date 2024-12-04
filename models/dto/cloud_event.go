@@ -75,7 +75,6 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	if !ok || businessid == "" {
 		businessid = "" // 或者设置为其他默认值
 	}
-	logrus.Infof("businessid :   %v", businessid)
 	messageCloudEventDO := do.MessageCloudEventDO{
 		Source:          event.Source(),
 		Time:            event.Time(),
