@@ -85,5 +85,5 @@ func (raw *NoteRaw) GetTodoUsers(events dto.CloudEvents) {
 }
 
 func (raw *NoteRaw) IsDone(events dto.CloudEvents) {
-	return
+	events.SetExtension("isdone", false)
 }
