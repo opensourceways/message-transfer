@@ -65,6 +65,12 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	} else {
 		followUsers = "{" + followUsers + "}"
 	}
+	relatedUsers, ok := event.Extensions()["relatedusers"].(string)
+	if !ok || relatedUsers == "" {
+		relatedUsers = "{}" // 或者设置为其他默认值
+	} else {
+		relatedUsers = "{" + relatedUsers + "}"
+	}
 	businessid, ok := event.Extensions()["businessid"].(string)
 	if !ok || businessid == "" {
 		businessid = "" // 或者设置为其他默认值
@@ -84,7 +90,7 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		Title:           event.Extensions()["title"].(string),
 		Summary:         event.Extensions()["summary"].(string),
 		SourceGroup:     event.Extensions()["sourcegroup"].(string),
-		RelatedUsers:    "{" + event.Extensions()["relatedusers"].(string) + "}",
+		RelatedUsers:    relatedUsers,
 		MailTitle:       event.Extensions()["mailtitle"].(string),
 		MailSummary:     event.Extensions()["mailsummary"].(string),
 		TodoUsers:       todoUsers,
