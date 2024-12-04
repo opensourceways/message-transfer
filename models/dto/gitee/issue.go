@@ -2,6 +2,7 @@ package gitee
 
 import (
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
@@ -47,7 +48,7 @@ func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 		todoUsers = []string{(*raw.Issue.Assignee).UserName}
 	}
 	events.SetExtension("todousers", strings.Join(todoUsers, ","))
-	events.SetExtension("businessid", string(raw.Issue.Id))
+	events.SetExtension("businessid", strconv.Itoa(int(raw.Issue.Id)))
 }
 
 func (raw *IssueRaw) IsDone(events dto.CloudEvents) {

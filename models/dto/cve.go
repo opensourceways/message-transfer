@@ -8,6 +8,7 @@ package dto
 import (
 	"regexp"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/opensourceways/go-gitee/gitee"
@@ -61,7 +62,7 @@ func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
 		todoUsers = []string{}
 	}
 	events.SetExtension("todousers", strings.Join(todoUsers, ","))
-	events.SetExtension("businessid", string(cveIssueRaw.Issue.Id))
+	events.SetExtension("businessid", strconv.Itoa(int(cveIssueRaw.Issue.Id)))
 }
 
 func (cveIssueRaw *CVEIssueRaw) IsDone(events CloudEvents) {
