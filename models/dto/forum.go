@@ -56,6 +56,7 @@ func (raw *Notification) isSystemAboutMessage() bool {
 }
 
 func (raw *Notification) GetRelateUsers(events CloudEvents) {
+	events.SetExtension("relatedusers", "")
 	if raw.isSystemMessage() {
 		return
 	}

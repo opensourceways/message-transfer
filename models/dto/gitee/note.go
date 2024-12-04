@@ -58,6 +58,8 @@ func (raw *NoteRaw) GetRelateUsers(events dto.CloudEvents) {
 	if !IsBot(raw) {
 		mention, owner := GetMentionedUsers(raw), GetOwner(raw)
 		events.SetExtension("relatedusers", strings.Join(append(mention, owner), ","))
+	} else {
+		events.SetExtension("relatedusers", "")
 	}
 }
 

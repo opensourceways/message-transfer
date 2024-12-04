@@ -15,11 +15,8 @@ import (
 	flattener "github.com/anshal21/json-flattener"
 	"github.com/araddon/dateparse"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"github.com/sirupsen/logrus"
-	"github.com/todocoder/go-stream/stream"
-
 	"github.com/opensourceways/message-transfer/models/bo"
-	"github.com/opensourceways/message-transfer/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // RawMap declare raw.
@@ -99,22 +96,6 @@ func (raw *RawMap) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
 	}
 	return newEvent
-}
-
-func (raw *RawMap) getMeetingRelatedUsers(sourceGroup string) []string {
-	maintainers, committers, _ := utils.GetMembersBySig(sourceGroup)
-	return append(maintainers, committers...)
-}
-
-func (raw *RawMap) distinct(items []string) []string {
-	resultList := stream.Of(items...).Distinct(func(item string) any { return item }).ToSlice()
-	var stringList []string
-	for _, str := range resultList {
-		if str != "" {
-			stringList = append(stringList, str)
-		}
-	}
-	return stringList
 }
 
 /*
