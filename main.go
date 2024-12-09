@@ -26,9 +26,8 @@ func main() {
 	logrusutil.ComponentInit("message-transfer")
 	log := logrus.NewEntry(logrus.StandardLogger())
 
-	cfg := initConfig()
+	cfg, projectName := initConfig()
 
-	logrus.Info("初始化pg,配置文件:", cfg.Postgresql)
 	if err := postgresql.Init(&cfg.Postgresql, false); err != nil {
 		logrus.Errorf("init postgresql failed, err:%s", err.Error())
 		return
@@ -44,6 +43,15 @@ func main() {
 		return
 	}
 
+	switch projectName {
+	case "openEuler":
+		subscribeOpenEuler()
+	case "openUBMC":
+		subscribeOpenUBMC()
+	}
+}
+
+func subscribeOpenEuler() {
 	go func() {
 		service.SubscribeEurRaw()
 	}()
@@ -69,7 +77,11 @@ func main() {
 	select {}
 }
 
-func initConfig() *config.Config {
+func subscribeOpenUBMC() {
+
+}
+
+func initConfig() (*config.Config, string) {
 	o, err := gatherOptions(
 		flag.NewFlagSet(os.Args[0], flag.ExitOnError),
 		os.Args[1:]...,
@@ -83,15 +95,28 @@ func initConfig() *config.Config {
 		logrus.Error("Config初始化失败, err:", err)
 	}
 	initTransferConfig(o)
-	return cfg
+	return cfg, o.ProjectName
 }
 
 func initTransferConfig(o options) {
+	switch o.ProjectName {
+	case "openEuler":
+		initOpenEulerTransferConfig(o)
+	case "openUBMC":
+		initOpenUBMCTransferConfig(o)
+	}
+}
+
+func initOpenEulerTransferConfig(o options) {
 	config.InitGiteeConfig(o.GiteeConfig)
 	config.InitEurBuildConfig(o.EurBuildConfig)
-	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
+	config.InitMeetingConfig(o.MeetingConfig)
 	config.InitCVEConfig(o.CVEConfig)
 	config.InitForumConfig(o.ForumConfig)
+}
+
+func initOpenUBMCTransferConfig(o options) {
+	config.InitMeetingConfig(o.MeetingConfig)
 }
 
 /*
@@ -106,12 +131,13 @@ func gatherOptions(fs *flag.FlagSet, args ...string) (options, error) {
 }
 
 type options struct {
-	Config                 string
-	EurBuildConfig         string
-	GiteeConfig            string
-	OpenEulerMeetingConfig string
-	CVEConfig              string
-	ForumConfig            string
+	Config         string
+	EurBuildConfig string
+	GiteeConfig    string
+	MeetingConfig  string
+	CVEConfig      string
+	ForumConfig    string
+	ProjectName    string
 }
 
 // AddFlags add flags.
@@ -119,8 +145,9 @@ func (o *options) AddFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.Config, "config-file", "", "Path to config file.")
 	fs.StringVar(&o.EurBuildConfig, "eur-build-config-file", "", "Path to eur-build config file.")
 	fs.StringVar(&o.GiteeConfig, "gitee-config-file", "", "Path to gitee config file.")
-	fs.StringVar(&o.OpenEulerMeetingConfig, "meeting-config-file", "",
+	fs.StringVar(&o.MeetingConfig, "meeting-config-file", "",
 		"Path to meeting config file.")
 	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to cve config file.")
 	fs.StringVar(&o.ForumConfig, "forum-config-file", "", "Path to forum config file.")
+	fs.StringVar(&o.ProjectName, "project-name", "", "Project name")
 }
