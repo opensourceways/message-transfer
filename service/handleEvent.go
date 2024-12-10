@@ -86,6 +86,7 @@ func EurBuildHandle(payload []byte, _ map[string]string) error {
 func OpenEulerMeetingHandle(payload []byte, _ map[string]string) error {
 	var raw dto.OpenEulerMeetingRaw
 	msgBodyErr := json.Unmarshal(payload, &raw)
+	logrus.Infof("receive meeting message, Title:%v", raw.Msg.Topic)
 	if msgBodyErr != nil {
 		logrus.Errorf("unmarshal meeting message failed, err:%v", msgBodyErr)
 		return msgBodyErr

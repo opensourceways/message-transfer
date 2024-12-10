@@ -36,7 +36,6 @@ type OpenEulerMeetingRaw struct {
 		Mid       string `json:"mid"`
 		Mmid      string `json:"mmid"`
 		JoinUrl   string `json:"join_url"`
-		IsDelete  int    `json:"is_delete"`
 		StartUrl  string `json:"start_url"`
 		Timezone  string `json:"timezone"`
 		User      int    `json:"user"`
