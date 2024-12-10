@@ -14,6 +14,7 @@ import (
 func handleEvent(rawEvent dto.RawEvent, cfg kafka.ConsumeConfig) error {
 	event := rawEvent.ToCloudEventsByConfig()
 	if event.ID() == "" {
+		logrus.Errorf("event id is empty")
 		return nil
 	}
 	rawEvent.GetTodoUsers(event)
