@@ -55,7 +55,8 @@ func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 		events.SetExtension("todousers", "")
 		return
 	}
-	events.SetExtension("todousers", strings.Join(sigMaintainers, ","))
+	allTodoUsers := append(sigMaintainers, raw.Msg.Sponsor)
+	events.SetExtension("todousers", strings.Join(allTodoUsers, ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
 
