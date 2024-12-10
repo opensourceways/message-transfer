@@ -12,7 +12,7 @@ import (
 )
 
 func handleEvent(rawEvent dto.RawEvent, cfg kafka.ConsumeConfig) error {
-	event := rawEvent.ToCloudEventsByConfig()
+	event := rawEvent.ToCloudEventsByConfig(cfg.Topic)
 	if event.ID() == "" {
 		logrus.Errorf("event id is empty")
 		return nil

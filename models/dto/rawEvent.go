@@ -4,6 +4,6 @@ type RawEvent interface {
 	GetRelateUsers(CloudEvents)
 	GetTodoUsers(CloudEvents)
 	GetFollowUsers(CloudEvents)
-	ToCloudEventsByConfig() CloudEvents
+	ToCloudEventsByConfig(topic string) CloudEvents
 	IsDone(events CloudEvents)
 }

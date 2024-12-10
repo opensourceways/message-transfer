@@ -32,9 +32,9 @@ type EurBuildMessageRaw struct {
 	SourceGroup string `json:"source_group"`
 }
 
-func (raw *EurBuildMessageRaw) ToCloudEventsByConfig() CloudEvents {
+func (raw *EurBuildMessageRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("eur_build_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {

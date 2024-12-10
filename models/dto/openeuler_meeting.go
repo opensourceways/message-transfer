@@ -63,9 +63,9 @@ func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
 	events.SetExtension("followusers", "")
 }
 
-func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig() CloudEvents {
+func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("openEuler_meeting_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw OpenEulerMeetingRaw) IsDone(events CloudEvents) {
