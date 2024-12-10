@@ -41,7 +41,8 @@ func SubscribeGiteeNote() {
 
 // SubscribeOpenEulerMeeting subscribe meeting topic.
 func SubscribeOpenEulerMeeting() {
-	logrus.Info("subscribing to openEuler meeting topic")
+	logrus.Info("subscribing to openEuler meeting topic", config.MeetingConfigInstance.Kafka.
+		Topic, config.MeetingConfigInstance.Kafka.Group, config.MeetingConfigInstance.Kafka.Publish)
 	_ = kfklib.Subscribe(config.MeetingConfigInstance.Kafka.Group, OpenEulerMeetingHandle,
 		[]string{config.MeetingConfigInstance.Kafka.Topic})
 }

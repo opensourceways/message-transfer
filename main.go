@@ -44,27 +44,27 @@ func main() {
 		return
 	}
 
-	go func() {
-		service.SubscribeEurRaw()
-	}()
-	go func() {
-		service.SubscribeGiteeIssue()
-	}()
-	go func() {
-		service.SubscribeGiteePr()
-	}()
-	go func() {
-		service.SubscribeGiteeNote()
-	}()
+	//go func() {
+	//	service.SubscribeEurRaw()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeIssue()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteePr()
+	//}()
+	//go func() {
+	//	service.SubscribeGiteeNote()
+	//}()
 	go func() {
 		service.SubscribeOpenEulerMeeting()
 	}()
-	go func() {
-		service.SubscribeCVERaw()
-	}()
-	go func() {
-		service.SubscribeForumRaw()
-	}()
+	//go func() {
+	//	service.SubscribeCVERaw()
+	//}()
+	//go func() {
+	//	service.SubscribeForumRaw()
+	//}()
 
 	select {}
 }
@@ -87,11 +87,11 @@ func initConfig() *config.Config {
 }
 
 func initTransferConfig(o options) {
-	config.InitGiteeConfig(o.GiteeConfig)
-	config.InitEurBuildConfig(o.EurBuildConfig)
+	//config.InitGiteeConfig(o.GiteeConfig)
+	//config.InitEurBuildConfig(o.EurBuildConfig)
 	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
-	config.InitCVEConfig(o.CVEConfig)
-	config.InitForumConfig(o.ForumConfig)
+	//config.InitCVEConfig(o.CVEConfig)
+	//config.InitForumConfig(o.ForumConfig)
 }
 
 /*
