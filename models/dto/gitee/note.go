@@ -49,9 +49,9 @@ func GetOwner(raw *NoteRaw) string {
 	}
 }
 
-func (raw *NoteRaw) ToCloudEventsByConfig() dto.CloudEvents {
+func (raw *NoteRaw) ToCloudEventsByConfig(topic string) dto.CloudEvents {
 	rawMap := dto.StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("gitee_note_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw *NoteRaw) GetRelateUsers(events dto.CloudEvents) {

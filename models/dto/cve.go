@@ -21,9 +21,9 @@ type CVEIssueRaw struct {
 	gitee.IssueEvent
 }
 
-func (cveIssueRaw *CVEIssueRaw) ToCloudEventsByConfig() CloudEvents {
+func (cveIssueRaw *CVEIssueRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := cveIssueRaw.ToMap()
-	return rawMap.ToCloudEventByConfig("cve_issue_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetRelateUsers(events CloudEvents) {

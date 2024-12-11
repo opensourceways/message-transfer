@@ -16,9 +16,9 @@ type PrRaw struct {
 	gitee.PullRequestEvent
 }
 
-func (raw *PrRaw) ToCloudEventsByConfig() dto.CloudEvents {
+func (raw *PrRaw) ToCloudEventsByConfig(topic string) dto.CloudEvents {
 	rawMap := dto.StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("gitee_pr_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw *PrRaw) GetRelateUsers(events dto.CloudEvents) {

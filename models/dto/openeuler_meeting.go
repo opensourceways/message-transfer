@@ -36,7 +36,6 @@ type OpenEulerMeetingRaw struct {
 		Mid       string `json:"mid"`
 		Mmid      string `json:"mmid"`
 		JoinUrl   string `json:"join_url"`
-		IsDelete  int    `json:"is_delete"`
 		StartUrl  string `json:"start_url"`
 		Timezone  string `json:"timezone"`
 		User      int    `json:"user"`
@@ -53,10 +52,9 @@ func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
-		events.SetExtension("todousers", "")
-		return
 	}
-	events.SetExtension("todousers", strings.Join(sigMaintainers, ","))
+	allTodoUsers := append(sigMaintainers, raw.Msg.Sponsor)
+	events.SetExtension("todousers", strings.Join(allTodoUsers, ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
 
@@ -64,9 +62,9 @@ func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
 	events.SetExtension("followusers", "")
 }
 
-func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig() CloudEvents {
+func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("openEuler_meeting_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw OpenEulerMeetingRaw) IsDone(events CloudEvents) {

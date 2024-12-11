@@ -14,9 +14,9 @@ type IssueRaw struct {
 	gitee.IssueEvent
 }
 
-func (raw *IssueRaw) ToCloudEventsByConfig() dto.CloudEvents {
+func (raw *IssueRaw) ToCloudEventsByConfig(topic string) dto.CloudEvents {
 	rawMap := dto.StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("gitee_issue_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw *IssueRaw) GetRelateUsers(events dto.CloudEvents) {

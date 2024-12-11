@@ -77,9 +77,9 @@ func (raw *Notification) GetFollowUsers(events CloudEvents) {
 	}
 }
 
-func (raw *Notification) ToCloudEventsByConfig() CloudEvents {
+func (raw *Notification) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := StructToMap(raw)
-	return rawMap.ToCloudEventByConfig("forum_raw")
+	return rawMap.ToCloudEventByConfig(topic)
 }
 
 func (raw *Notification) IsDone(events CloudEvents) {
