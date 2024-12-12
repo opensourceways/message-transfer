@@ -68,7 +68,7 @@ func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 }
 
 func (raw OpenEulerMeetingRaw) IsDone(events CloudEvents) {
-
+	events.SetExtension("isdone", false)
 	if raw.Action == "delete_meeting" {
 		events.SetExtension("isdone", true)
 		return
