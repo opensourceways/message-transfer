@@ -50,6 +50,7 @@ func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
 
 func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
+	logrus.Debugf("Sig is %v,  sigMaintainers:%v", raw.Msg.GroupName, sigMaintainers)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
 	}
