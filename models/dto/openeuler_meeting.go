@@ -49,11 +49,12 @@ func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
 }
 
 func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
-	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
+	sigMaintainers, commiters, err := utils.GetMembersBySig(raw.Msg.GroupName)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
 	}
 	allTodoUsers := append(sigMaintainers, raw.Msg.Sponsor)
+	allTodoUsers = append(allTodoUsers, commiters...)
 	events.SetExtension("todousers", strings.Join(allTodoUsers, ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
