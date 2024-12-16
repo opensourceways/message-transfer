@@ -49,12 +49,12 @@ func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
 }
 
 func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
-	sigMaintainers, _, err := utils.GetMembersBySig(raw.Msg.GroupName)
-	logrus.Debugf("Sig is %v,  sigMaintainers:%v", raw.Msg.GroupName, sigMaintainers)
+	sigMaintainers, commiters, err := utils.GetMembersBySig(raw.Msg.GroupName)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
 	}
 	allTodoUsers := append(sigMaintainers, raw.Msg.Sponsor)
+	allTodoUsers = append(allTodoUsers, commiters...)
 	events.SetExtension("todousers", strings.Join(allTodoUsers, ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
@@ -69,7 +69,7 @@ func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 }
 
 func (raw OpenEulerMeetingRaw) IsDone(events CloudEvents) {
-
+	events.SetExtension("isdone", false)
 	if raw.Action == "delete_meeting" {
 		events.SetExtension("isdone", true)
 		return

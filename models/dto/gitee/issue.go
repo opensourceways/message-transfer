@@ -47,6 +47,10 @@ func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 	if raw.Issue.Assignee != nil {
 		todoUsers = []string{(*raw.Issue.Assignee).UserName}
 	}
+
+	if raw.Assignee != nil {
+		todoUsers = append(todoUsers, (*raw.Assignee).UserName)
+	}
 	events.SetExtension("todousers", strings.Join(todoUsers, ","))
 	events.SetExtension("businessid", strconv.Itoa(int(raw.Issue.Id)))
 }

@@ -72,6 +72,17 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 		return
 	}
 	mentionAndOwner := append(mention, owner)
+
+	if *raw.NoteableType == "PullRequest" {
+		for _, assignee := range raw.PullRequest.Assignees {
+			mentionAndOwner = append(mentionAndOwner, assignee.UserName)
+		}
+	} else if *raw.NoteableType == "Issue" {
+		if raw.Issue.Assignee != nil {
+			mentionAndOwner = append(mentionAndOwner, (*raw.Issue.Assignee).UserName)
+		}
+	}
+
 	if IsBot(raw) {
 		events.SetExtension("followusers", strings.Join(mentionAndOwner, ","))
 	} else {
