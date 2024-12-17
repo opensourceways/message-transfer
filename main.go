@@ -65,6 +65,9 @@ func main() {
 	//go func() {
 	//	service.SubscribeForumRaw()
 	//}()
+	go func() {
+		service.SubscribePublishRaw()
+	}()
 
 	select {}
 }
@@ -92,6 +95,7 @@ func initTransferConfig(o options) {
 	config.InitMeetingConfig(o.OpenEulerMeetingConfig)
 	//config.InitCVEConfig(o.CVEConfig)
 	//config.InitForumConfig(o.ForumConfig)
+	config.InitPublishConfig(o.PublishConfig)
 }
 
 /*
@@ -112,6 +116,7 @@ type options struct {
 	OpenEulerMeetingConfig string
 	CVEConfig              string
 	ForumConfig            string
+	PublishConfig          string
 }
 
 // AddFlags add flags.
@@ -123,4 +128,5 @@ func (o *options) AddFlags(fs *flag.FlagSet) {
 		"Path to meeting config file.")
 	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to cve config file.")
 	fs.StringVar(&o.ForumConfig, "forum-config-file", "", "Path to forum config file.")
+	fs.StringVar(&o.PublishConfig, "publish-config-file", "", "Path to publish config file.")
 }

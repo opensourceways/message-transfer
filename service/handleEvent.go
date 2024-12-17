@@ -105,3 +105,14 @@ func OpenEulerForumHandle(payload []byte, _ map[string]string) error {
 	}
 	return handleEvent(&raw, config.ForumConfigInstance.Kafka)
 }
+
+// PublishHandle handle publish raw.
+func PublishHandle(payload []byte, _ map[string]string) error {
+	var raw dto.PublishRaw
+	msgBodyErr := json.Unmarshal(payload, &raw)
+	if msgBodyErr != nil {
+		logrus.Errorf("unmarshal publish message failed, err:%v", msgBodyErr)
+		return msgBodyErr
+	}
+	return handleEvent(&raw, config.PublishConfigInstance.Kafka)
+}

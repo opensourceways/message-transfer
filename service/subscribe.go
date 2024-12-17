@@ -60,3 +60,10 @@ func SubscribeForumRaw() {
 	_ = kfklib.Subscribe(config.ForumConfigInstance.Kafka.Group, OpenEulerForumHandle,
 		[]string{config.ForumConfigInstance.Kafka.Topic})
 }
+
+// SubscribePublishRaw subscribe publish topic.
+func SubscribePublishRaw() {
+	logrus.Info("subscribing to publish topic")
+	_ = kfklib.Subscribe(config.PublishConfigInstance.Kafka.Group, PublishHandle,
+		[]string{config.PublishConfigInstance.Kafka.Topic})
+}
