@@ -114,5 +114,6 @@ func PublishHandle(payload []byte, _ map[string]string) error {
 		logrus.Errorf("unmarshal publish message failed, err:%v", msgBodyErr)
 		return msgBodyErr
 	}
+	logrus.Infof("the raw is %v", raw)
 	return handleEvent(&raw, config.PublishConfigInstance.Kafka)
 }

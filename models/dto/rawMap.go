@@ -91,6 +91,7 @@ func (raw *RawMap) ToCloudEventByConfig(sourceTopic string) CloudEvents {
 	configs := bo.GetTransferConfigFromDb(sourceTopic)
 	if configs != nil {
 		for _, config := range configs {
+			logrus.Infof("the filed is %v", config.Field)
 			raw.transferField(&newEvent, config)
 		}
 		newEvent.SetData(cloudevents.ApplicationJSON, raw)
