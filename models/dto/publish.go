@@ -5,6 +5,8 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 // Package dto models dto of eur build.
 package dto
 
+import "time"
+
 // PublishRaw eur build message raw.
 type PublishRaw struct {
 	Version string `json:"Version"`
@@ -30,4 +32,5 @@ func (raw *PublishRaw) GetTodoUsers(events CloudEvents) {
 
 func (raw *PublishRaw) IsDone(events CloudEvents) {
 	events.SetExtension("isdone", false)
+	events.SetTime(time.Now())
 }
