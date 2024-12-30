@@ -28,6 +28,10 @@ func (raw CertificationRaw) GetRelateUsers(events CloudEvents) {
 }
 
 func (raw CertificationRaw) GetTodoUsers(events CloudEvents) {
+	if raw.Type != "todo" {
+		events.SetExtension("todousers", "")
+		return
+	}
 	userId := raw.User
 	userName, err := utils.GetUserNameById(userId)
 	if err != nil {
@@ -38,6 +42,10 @@ func (raw CertificationRaw) GetTodoUsers(events CloudEvents) {
 }
 
 func (raw CertificationRaw) GetFollowUsers(events CloudEvents) {
+	if raw.Type != "notice" {
+		events.SetExtension("followusers", "")
+		return
+	}
 	userIds := strings.Split(raw.User, ",")
 	var userNames []string
 	for _, userId := range userIds {
