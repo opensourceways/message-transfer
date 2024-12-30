@@ -7,6 +7,7 @@ package dto
 
 import (
 	"strings"
+	"time"
 
 	"github.com/opensourceways/message-transfer/utils"
 )
@@ -14,7 +15,7 @@ import (
 // CertificationRaw openEuler meeting raw.
 type CertificationRaw struct {
 	Content     string `json:"content"`
-	Time        string `json:"createTime"`
+	Time        int64  `json:"createTime"`
 	RedirectUrl string `json:"redirectUrl"`
 	Type        string `json:"type"`
 	User        string `json:"user"`
@@ -56,5 +57,9 @@ func (raw CertificationRaw) ToCloudEventsByConfig(topic string) CloudEvents {
 }
 
 func (raw CertificationRaw) IsDone(events CloudEvents) {
+	seconds := raw.Time / 1000
+	nanoseconds := (raw.Time % 1000) * 1000000
+	t := time.Unix(seconds, nanoseconds)
+	events.SetTime(t)
 	events.SetExtension("isdone", raw.TodoStatus == "done")
 }
