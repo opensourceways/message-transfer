@@ -6,6 +6,7 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 package dto
 
 import (
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,7 +20,7 @@ type CertificationRaw struct {
 	RedirectUrl string `json:"redirectUrl"`
 	Type        string `json:"type"`
 	User        string `json:"user"`
-	TodoId      string `json:"todoId"`
+	TodoId      int    `json:"todoId"`
 	TodoStatus  string `json:"todoStatus"`
 }
 
@@ -39,6 +40,7 @@ func (raw CertificationRaw) GetTodoUsers(events CloudEvents) {
 		return
 	}
 	events.SetExtension("todousers", userName)
+	events.SetExtension("businessid", strconv.Itoa(raw.TodoId))
 }
 
 func (raw CertificationRaw) GetFollowUsers(events CloudEvents) {
