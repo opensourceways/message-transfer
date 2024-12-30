@@ -16,6 +16,10 @@ type Config struct {
 	EulerRepoSigUrl      string `json:"euler_repo_sig_url"`
 	EulerUserSigUrl      string `json:"euler_user_sig_url"`
 	QuerySigInfo         string `json:"query_sig_info"`
+	AuthorHost           string `json:"author_host"`
+	Community            string `json:"community"`
+	AppId                string `json:"app_id"`
+	AppSecret            string `json:"app_secret"`
 }
 
 var config Config
