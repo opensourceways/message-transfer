@@ -30,39 +30,53 @@ func (cveIssueRaw *CVEIssueRaw) GetRelateUsers(events CloudEvents) {
 	events.SetExtension("relatedusers", "")
 }
 
-func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
+func (cveIssueRaw *CVEIssueRaw) followUsers() []string {
 	sigGroup, err := utils.GetRepoSigInfo(cveIssueRaw.Repository.Name)
 	if err != nil {
-		return
+		return []string{}
 	}
 	sigMaintainers, _, err := utils.GetMembersBySig(sigGroup)
 	if err != nil {
-		return
+		return []string{}
 	}
 
 	repo := strings.Split(cveIssueRaw.Repository.FullName, "/")
 	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
 	if err != nil {
-		return
+		return []string{}
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
-	var assignee []string
-	if cveIssueRaw.Issue.Assignee != nil {
-		assignee = []string{cveIssueRaw.Issue.Assignee.UserName}
-	}
-	followUsers = utils.Difference(followUsers, assignee)
-	events.SetExtension("followusers", strings.Join(followUsers, ","))
+	followUsers = utils.Difference(followUsers, cveIssueRaw.todoUsers())
+	followUsers = utils.Difference(followUsers, cveIssueRaw.applyUsers())
+	return followUsers
 }
 
-func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
+func (cveIssueRaw *CVEIssueRaw) GetFollowUsers(events CloudEvents) {
+	events.SetExtension("followusers", strings.Join(cveIssueRaw.followUsers(), ","))
+}
+
+func (cveIssueRaw *CVEIssueRaw) todoUsers() []string {
 	var todoUsers []string
 	if cveIssueRaw.Issue.Assignee != nil {
 		todoUsers = []string{cveIssueRaw.Issue.Assignee.UserName}
 	} else {
 		todoUsers = []string{}
 	}
-	events.SetExtension("todousers", strings.Join(todoUsers, ","))
+	todoUsers = utils.Difference(todoUsers, cveIssueRaw.applyUsers())
+	return todoUsers
+}
+
+func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
+	events.SetExtension("todousers", strings.Join(cveIssueRaw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(int(cveIssueRaw.Issue.Id)))
+}
+
+func (cveIssueRaw *CVEIssueRaw) applyUsers() []string {
+	return []string{}
+}
+
+func (cveIssueRaw *CVEIssueRaw) GetApplyUsers(events CloudEvents) {
+	events.SetExtension("applyusers", strings.Join(cveIssueRaw.applyUsers(), ","))
 }
 
 func (cveIssueRaw *CVEIssueRaw) IsDone(events CloudEvents) {

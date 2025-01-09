@@ -5,7 +5,11 @@ Copyright (c) Huawei Technologies Co., Ltd. 2024. All rights reserved
 // Package dto models dto of eur build.
 package dto
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/opensourceways/message-transfer/utils"
+)
 
 // EurBuildMessageRaw eur build message raw.
 type EurBuildMessageRaw struct {
@@ -41,13 +45,26 @@ func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
 	events.SetExtension("relatedusers", "")
 }
 
-func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
+func (raw *EurBuildMessageRaw) followUsers() []string {
 	followUsers := []string{raw.Body.User, raw.Body.Owner}
-	events.SetExtension("followusers", strings.Join(followUsers, ","))
+	followUsers = utils.Difference(followUsers, raw.applyUsers())
+	return followUsers
+}
+
+func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
+	events.SetExtension("followusers", strings.Join(raw.followUsers(), ","))
 }
 
 func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
 	events.SetExtension("todousers", "")
+}
+
+func (raw *EurBuildMessageRaw) applyUsers() []string {
+	return []string{raw.Body.User}
+}
+
+func (raw *EurBuildMessageRaw) GetApplyUsers(events CloudEvents) {
+	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw *EurBuildMessageRaw) IsDone(events CloudEvents) {

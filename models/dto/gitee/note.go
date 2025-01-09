@@ -54,22 +54,29 @@ func (raw *NoteRaw) ToCloudEventsByConfig(topic string) dto.CloudEvents {
 	return rawMap.ToCloudEventByConfig(topic)
 }
 
-func (raw *NoteRaw) GetRelateUsers(events dto.CloudEvents) {
+func (raw *NoteRaw) relatedUsers() []string {
+	var relatedUsers []string
 	if !IsBot(raw) {
 		mention, owner := GetMentionedUsers(raw), GetOwner(raw)
-		events.SetExtension("relatedusers", strings.Join(append(mention, owner), ","))
+		relatedUsers = append(mention, owner)
 	} else {
-		events.SetExtension("relatedusers", "")
+		relatedUsers = []string{}
 	}
+	return relatedUsers
 }
 
-func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
+func (raw *NoteRaw) GetRelateUsers(events dto.CloudEvents) {
+	events.SetExtension("relatedusers", strings.Join(raw.relatedUsers(), ","))
+}
+
+func (raw *NoteRaw) followUsers() []string {
+	var followUsers []string
 	mention := GetMentionedUsers(raw)
 	owner := GetOwner(raw)
 	repo := strings.Split(raw.Repository.FullName, "/")
 	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
 	if err != nil {
-		return
+		return []string{}
 	}
 	mentionAndOwner := append(mention, owner)
 
@@ -84,15 +91,23 @@ func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
 	}
 
 	if IsBot(raw) {
-		events.SetExtension("followusers", strings.Join(mentionAndOwner, ","))
+		followUsers = mentionAndOwner
 	} else {
-		events.SetExtension("followusers", strings.Join(utils.Difference(repoAdmins,
-			mentionAndOwner), ","))
+		followUsers = utils.Difference(repoAdmins, raw.relatedUsers())
 	}
+	return followUsers
+}
+
+func (raw *NoteRaw) GetFollowUsers(events dto.CloudEvents) {
+	events.SetExtension("followusers", strings.Join(raw.followUsers(), ","))
 }
 
 func (raw *NoteRaw) GetTodoUsers(events dto.CloudEvents) {
 	events.SetExtension("todousers", "")
+}
+
+func (raw *NoteRaw) GetApplyUsers(events dto.CloudEvents) {
+	events.SetExtension("applyusers", "")
 }
 
 func (raw *NoteRaw) IsDone(events dto.CloudEvents) {

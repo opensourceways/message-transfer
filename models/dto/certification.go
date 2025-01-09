@@ -28,37 +28,54 @@ func (raw CertificationRaw) GetRelateUsers(events CloudEvents) {
 	events.SetExtension("relatedusers", "")
 }
 
-func (raw CertificationRaw) GetTodoUsers(events CloudEvents) {
-	if raw.Type != "todo" {
-		events.SetExtension("todousers", "")
-		return
+func (raw CertificationRaw) todoUsers() []string {
+	var todoUsers []string
+	if raw.Type == "todo" {
+		return []string{}
 	}
 	userId := raw.User
 	userName, err := utils.GetUserNameById(userId)
 	if err != nil {
-		events.SetExtension("todousers", "")
-		return
+		return []string{}
 	}
-	events.SetExtension("todousers", userName)
+	todoUsers = []string{userName}
+	return todoUsers
+}
+
+func (raw CertificationRaw) GetTodoUsers(events CloudEvents) {
+	events.SetExtension("todousers", strings.Join(raw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.TodoId))
 }
 
-func (raw CertificationRaw) GetFollowUsers(events CloudEvents) {
+func (raw CertificationRaw) followUsers() []string {
+	var followUsers []string
 	if raw.Type != "notice" {
-		events.SetExtension("followusers", "")
-		return
+		return []string{}
 	}
 	userIds := strings.Split(raw.User, ",")
 	var userNames []string
 	for _, userId := range userIds {
 		userName, err := utils.GetUserNameById(userId)
 		if err != nil {
-			events.SetExtension("followusers", "")
-			return
+			return []string{}
 		}
 		userNames = append(userNames, userName)
 	}
-	events.SetExtension("followusers", strings.Join(userNames, ","))
+	followUsers = userNames
+	followUsers = utils.Difference(followUsers, raw.todoUsers())
+	return followUsers
+}
+
+func (raw CertificationRaw) GetFollowUsers(events CloudEvents) {
+	events.SetExtension("followusers", strings.Join(raw.followUsers(), ","))
+}
+
+func (raw CertificationRaw) applyUsers() []string {
+	return []string{}
+}
+
+func (raw CertificationRaw) GetApplyUsers(events CloudEvents) {
+	events.SetExtension("applyusers", "")
 }
 
 func (raw CertificationRaw) ToCloudEventsByConfig(topic string) CloudEvents {

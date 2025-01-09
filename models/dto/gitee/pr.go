@@ -25,37 +25,55 @@ func (raw *PrRaw) GetRelateUsers(events dto.CloudEvents) {
 	events.SetExtension("relatedusers", "")
 }
 
-func (raw *PrRaw) GetFollowUsers(events dto.CloudEvents) {
+func (raw *PrRaw) followUsers() []string {
 	sigGroup, err := utils.GetRepoSigInfo(raw.Repository.Name)
 	if err != nil {
-		return
+		return []string{}
 	}
 	sigMaintainers, _, err := utils.GetMembersBySig(sigGroup)
 	if err != nil {
-		return
+		return []string{}
 	}
 
 	repo := strings.Split(raw.Repository.FullName, "/")
 	repoAdmins, err := utils.GetAllAdmins(repo[0], repo[1])
 	if err != nil {
-		return
+		return []string{}
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
-	events.SetExtension("followusers", strings.Join(utils.Difference(followUsers,
-		raw.getTodoUsers()), ","))
+	followUsers = utils.Difference(followUsers, raw.todoUsers())
+	followUsers = utils.Difference(followUsers, raw.applyUsers())
+	return followUsers
 }
 
-func (raw *PrRaw) getTodoUsers() []string {
-	var assignees []string
+func (raw *PrRaw) GetFollowUsers(events dto.CloudEvents) {
+	events.SetExtension("followusers", strings.Join(raw.followUsers(), ","))
+}
+
+func (raw *PrRaw) todoUsers() []string {
+	var todoUsers []string
 	for _, assignee := range raw.PullRequest.Assignees {
-		assignees = append(assignees, assignee.UserName)
+		todoUsers = append(todoUsers, assignee.UserName)
 	}
-	return assignees
+	todoUsers = utils.Difference(todoUsers, raw.applyUsers())
+	return todoUsers
 }
 
 func (raw *PrRaw) GetTodoUsers(events dto.CloudEvents) {
-	events.SetExtension("todousers", strings.Join(raw.getTodoUsers(), ","))
+	events.SetExtension("todousers", strings.Join(raw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(int(raw.PullRequest.Id)))
+}
+
+func (raw *PrRaw) applyUsers() []string {
+	var applyUsers []string
+	if raw.Sender != nil {
+		applyUsers = []string{raw.Sender.UserName}
+	}
+	return applyUsers
+}
+
+func (raw *PrRaw) GetApplyUsers(events dto.CloudEvents) {
+	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw *PrRaw) IsDone(events dto.CloudEvents) {

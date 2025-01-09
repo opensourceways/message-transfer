@@ -77,6 +77,10 @@ func (raw *Notification) GetFollowUsers(events CloudEvents) {
 	}
 }
 
+func (raw *Notification) GetApplyUsers(events CloudEvents) {
+	events.SetExtension("applyusers", "")
+}
+
 func (raw *Notification) ToCloudEventsByConfig(topic string) CloudEvents {
 	rawMap := StructToMap(raw)
 	return rawMap.ToCloudEventByConfig(topic)

@@ -48,19 +48,32 @@ func (raw OpenEulerMeetingRaw) GetRelateUsers(events CloudEvents) {
 	events.SetExtension("relatedusers", "")
 }
 
-func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
+func (raw OpenEulerMeetingRaw) todoUsers() []string {
+	var todoUsers []string
 	sigMaintainers, commiters, err := utils.GetMembersBySig(raw.Msg.GroupName)
 	if err != nil {
 		logrus.Errorf("get members by sig failed, err:%v", err)
 	}
-	allTodoUsers := append(sigMaintainers, raw.Msg.Sponsor)
-	allTodoUsers = append(allTodoUsers, commiters...)
-	events.SetExtension("todousers", strings.Join(allTodoUsers, ","))
+	todoUsers = append(sigMaintainers, commiters...)
+	todoUsers = utils.Difference(todoUsers, raw.applyUsers())
+	return todoUsers
+}
+
+func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
+	events.SetExtension("todousers", strings.Join(raw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(raw.Msg.Id))
 }
 
 func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
 	events.SetExtension("followusers", "")
+}
+
+func (raw OpenEulerMeetingRaw) applyUsers() []string {
+	return []string{raw.Msg.Sponsor}
+}
+
+func (raw OpenEulerMeetingRaw) GetApplyUsers(events CloudEvents) {
+	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {
