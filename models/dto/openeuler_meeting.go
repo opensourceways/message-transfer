@@ -41,6 +41,7 @@ type OpenEulerMeetingRaw struct {
 		User      int    `json:"user"`
 		Group     int    `json:"group"`
 		Mplatform string `json:"mplatform"`
+		ReplayUrl string `json:"replay_url"`
 	} `json:"msg"`
 }
 
@@ -55,6 +56,7 @@ func (raw OpenEulerMeetingRaw) todoUsers() []string {
 		logrus.Errorf("get members by sig failed, err:%v", err)
 	}
 	todoUsers = append(sigMaintainers, commiters...)
+	todoUsers = append(todoUsers, raw.Msg.Sponsor)
 	todoUsers = utils.Difference(todoUsers, raw.applyUsers())
 	return todoUsers
 }
@@ -69,7 +71,7 @@ func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
 }
 
 func (raw OpenEulerMeetingRaw) applyUsers() []string {
-	return []string{raw.Msg.Sponsor}
+	return []string{}
 }
 
 func (raw OpenEulerMeetingRaw) GetApplyUsers(events CloudEvents) {
