@@ -111,6 +111,7 @@ type options struct {
 	OpenEulerMeetingConfig string
 	CVEConfig              string
 	ForumConfig            string
+	CertificationConfig    string
 }
 
 // AddFlags add flags.
@@ -122,4 +123,6 @@ func (o *options) AddFlags(fs *flag.FlagSet) {
 		"Path to meeting config file.")
 	fs.StringVar(&o.CVEConfig, "cve-config-file", "", "Path to cve config file.")
 	fs.StringVar(&o.ForumConfig, "forum-config-file", "", "Path to forum config file.")
+	fs.StringVar(&o.CertificationConfig, "certification-config-file", "",
+		"Path to certification config file.")
 }
