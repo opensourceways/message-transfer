@@ -106,10 +106,6 @@ func (raw *NoteRaw) GetTodoUsers(events dto.CloudEvents) {
 	events.SetExtension("todousers", "")
 }
 
-func (raw *NoteRaw) GetApplyUsers(events dto.CloudEvents) {
-	events.SetExtension("applyusers", "")
-}
-
 func (raw *NoteRaw) IsDone(events dto.CloudEvents) {
 	events.SetExtension("isdone", false)
 }

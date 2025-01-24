@@ -7,8 +7,6 @@ package dto
 
 import (
 	"strings"
-
-	"github.com/opensourceways/message-transfer/utils"
 )
 
 // EurBuildMessageRaw eur build message raw.
@@ -47,7 +45,6 @@ func (raw *EurBuildMessageRaw) GetRelateUsers(events CloudEvents) {
 
 func (raw *EurBuildMessageRaw) followUsers() []string {
 	followUsers := []string{raw.Body.User, raw.Body.Owner}
-	followUsers = utils.Difference(followUsers, raw.applyUsers())
 	return followUsers
 }
 
@@ -57,14 +54,6 @@ func (raw *EurBuildMessageRaw) GetFollowUsers(events CloudEvents) {
 
 func (raw *EurBuildMessageRaw) GetTodoUsers(events CloudEvents) {
 	events.SetExtension("todousers", "")
-}
-
-func (raw *EurBuildMessageRaw) applyUsers() []string {
-	return []string{raw.Body.User}
-}
-
-func (raw *EurBuildMessageRaw) GetApplyUsers(events CloudEvents) {
-	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw *EurBuildMessageRaw) IsDone(events CloudEvents) {

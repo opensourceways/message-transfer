@@ -105,14 +105,3 @@ func OpenEulerForumHandle(payload []byte, _ map[string]string) error {
 	}
 	return handleEvent(&raw, config.ForumConfigInstance.Kafka)
 }
-
-// CertificationHandle handle certification raw.
-func CertificationHandle(payload []byte, _ map[string]string) error {
-	var raw dto.CertificationRaw
-	msgBodyErr := json.Unmarshal(payload, &raw)
-	if msgBodyErr != nil {
-		logrus.Errorf("unmarshal certification message failed, err:%v", msgBodyErr)
-		return msgBodyErr
-	}
-	return handleEvent(&raw, config.CertificationConfigInstance.Kafka)
-}

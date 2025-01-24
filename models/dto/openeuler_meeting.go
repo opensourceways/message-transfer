@@ -57,7 +57,6 @@ func (raw OpenEulerMeetingRaw) todoUsers() []string {
 	}
 	todoUsers = append(sigMaintainers, commiters...)
 	todoUsers = append(todoUsers, raw.Msg.Sponsor)
-	todoUsers = utils.Difference(todoUsers, raw.applyUsers())
 	return todoUsers
 }
 
@@ -68,14 +67,6 @@ func (raw OpenEulerMeetingRaw) GetTodoUsers(events CloudEvents) {
 
 func (raw OpenEulerMeetingRaw) GetFollowUsers(events CloudEvents) {
 	events.SetExtension("followusers", "")
-}
-
-func (raw OpenEulerMeetingRaw) applyUsers() []string {
-	return []string{}
-}
-
-func (raw OpenEulerMeetingRaw) GetApplyUsers(events CloudEvents) {
-	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw OpenEulerMeetingRaw) ToCloudEventsByConfig(topic string) CloudEvents {

@@ -42,7 +42,7 @@ func (event CloudEvents) SaveDb() error {
 		Columns: []clause.Column{{Name: "event_id"}},
 		DoUpdates: clause.AssignmentColumns([]string{"source_url", "source_group",
 			"summary", "data_schema", "data_content_type", "spec_version", "time", "user",
-			"data_json", "title", "related_users", "todo_users", "follow_users", "apply_users",
+			"data_json", "title", "related_users", "todo_users", "follow_users",
 			"business_id", "mail_title", "mail_summary"}),
 	}).Create(&eventDO)
 	if result.Error != nil {
@@ -71,12 +71,6 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 	} else {
 		relatedUsers = "{" + relatedUsers + "}"
 	}
-	applyUsers, ok := event.Extensions()["applyusers"].(string)
-	if !ok || relatedUsers == "" {
-		applyUsers = "{}" // 或者设置为其他默认值
-	} else {
-		applyUsers = "{" + applyUsers + "}"
-	}
 	businessid, ok := event.Extensions()["businessid"].(string)
 	if !ok || businessid == "" {
 		businessid = "" // 或者设置为其他默认值
@@ -100,7 +94,6 @@ func (event CloudEvents) toCloudEventDO() do.MessageCloudEventDO {
 		MailSummary:     event.Extensions()["mailsummary"].(string),
 		TodoUsers:       todoUsers,
 		FollowUsers:     followUsers,
-		ApplyUsers:      applyUsers,
 		BusinessId:      businessid,
 	}
 	return messageCloudEventDO

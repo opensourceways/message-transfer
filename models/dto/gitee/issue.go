@@ -40,7 +40,6 @@ func (raw *IssueRaw) followUsers() []string {
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
 	followUsers = utils.Difference(followUsers, raw.todoUsers())
-	followUsers = utils.Difference(followUsers, raw.applyUsers())
 	return followUsers
 }
 
@@ -57,25 +56,12 @@ func (raw *IssueRaw) todoUsers() []string {
 	if raw.Assignee != nil {
 		todoUsers = append(todoUsers, (*raw.Assignee).UserName)
 	}
-	todoUsers = utils.Difference(todoUsers, raw.applyUsers())
 	return todoUsers
 }
 
 func (raw *IssueRaw) GetTodoUsers(events dto.CloudEvents) {
 	events.SetExtension("todousers", strings.Join(raw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(int(raw.Issue.Id)))
-}
-
-func (raw *IssueRaw) applyUsers() []string {
-	var applyUsers []string
-	if raw.Sender != nil {
-		applyUsers = append(applyUsers, raw.Sender.UserName)
-	}
-	return applyUsers
-}
-
-func (raw *IssueRaw) GetApplyUsers(events dto.CloudEvents) {
-	events.SetExtension("applyusers", strings.Join(raw.applyUsers(), ","))
 }
 
 func (raw *IssueRaw) IsDone(events dto.CloudEvents) {

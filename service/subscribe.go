@@ -59,10 +59,3 @@ func SubscribeForumRaw() {
 	_ = kfklib.Subscribe(config.ForumConfigInstance.Kafka.Group, OpenEulerForumHandle,
 		[]string{config.ForumConfigInstance.Kafka.Topic})
 }
-
-// SubscribeCertificationRaw subscribe certification topic.
-func SubscribeCertificationRaw() {
-	logrus.Info("subscribing to certification topic")
-	_ = kfklib.Subscribe(config.CertificationConfigInstance.Kafka.Group, CertificationHandle,
-		[]string{config.CertificationConfigInstance.Kafka.Topic})
-}

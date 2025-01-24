@@ -34,7 +34,6 @@ type MessageCloudEventDO struct {
 	MailSummary     string         `gorm:"column:mail_summary"`
 	TodoUsers       string         `gorm:"column:todo_users"`
 	FollowUsers     string         `gorm:"column:follow_users"`
-	ApplyUsers      string         `gorm:"column:apply_users"`
 	BusinessId      string         `gorm:"column:business_id"`
 }
 

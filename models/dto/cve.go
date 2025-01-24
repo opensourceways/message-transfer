@@ -47,7 +47,6 @@ func (cveIssueRaw *CVEIssueRaw) followUsers() []string {
 	}
 	followUsers := slices.Concat(sigMaintainers, repoAdmins)
 	followUsers = utils.Difference(followUsers, cveIssueRaw.todoUsers())
-	followUsers = utils.Difference(followUsers, cveIssueRaw.applyUsers())
 	return followUsers
 }
 
@@ -62,21 +61,12 @@ func (cveIssueRaw *CVEIssueRaw) todoUsers() []string {
 	} else {
 		todoUsers = []string{}
 	}
-	todoUsers = utils.Difference(todoUsers, cveIssueRaw.applyUsers())
 	return todoUsers
 }
 
 func (cveIssueRaw *CVEIssueRaw) GetTodoUsers(events CloudEvents) {
 	events.SetExtension("todousers", strings.Join(cveIssueRaw.todoUsers(), ","))
 	events.SetExtension("businessid", strconv.Itoa(int(cveIssueRaw.Issue.Id)))
-}
-
-func (cveIssueRaw *CVEIssueRaw) applyUsers() []string {
-	return []string{}
-}
-
-func (cveIssueRaw *CVEIssueRaw) GetApplyUsers(events CloudEvents) {
-	events.SetExtension("applyusers", strings.Join(cveIssueRaw.applyUsers(), ","))
 }
 
 func (cveIssueRaw *CVEIssueRaw) IsDone(events CloudEvents) {
